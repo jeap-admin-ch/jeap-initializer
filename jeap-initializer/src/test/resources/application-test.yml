@@ -1,0 +1,18 @@
+jeap:
+  initializer:
+    templates:
+      jeap-scs:
+        repository-configuration:
+          url: "https://testhost/scm/TEST/my-project-template.git"
+      gitops-template:
+        repository-configuration:
+          url: "https://testhost/scm/TEST/my-project-template.git"
+        git-ops-repository-configuration:
+          url: https://github/TEST/my-project-template.git
+
+spring:
+  application:
+    name: test
+  main:
+    banner-mode: off
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body>
+
+<div th:fragment="formButtons" th:with="label=${label} ?: 'Next'">
+    <div class="form-buttons">
+        <button id="reset-button" class="form-button reset-button" type="submit" th:formaction="@{/wizard/reset}"
+                formnovalidate>Reset
+        </button>
+        <button id="submit-button" class="form-button" type="submit" th:text="${label}">Next</button>
+    </div>
+</div>
+
+<div th:fragment="errorList">
+    <div th:if="${#fields.hasAnyErrors()}">
+        <ul>
+            <li class="errmsg" th:each="err : ${#fields.allErrors()}" th:text="${err}"></li>
+        </ul>
+    </div>
+</div>
+
+<div th:fragment="footer">
+    <footer>
+        Developed with &#9825; by Team Margun
+    </footer>
+</div>
+</body>
+</html>

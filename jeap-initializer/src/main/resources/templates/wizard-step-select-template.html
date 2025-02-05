@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>jEAP Initializer - Select Template</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+</head>
+
+<body>
+
+<h1>Select Template</h1>
+<form th:action="@{/wizard/step/select-template}" th:object="${templateSelectionModel}" method="post"
+      autocomplete="off">
+    <p>Choose a template for your application:</p>
+
+    <div th:replace="~{fragments :: errorList}"></div>
+
+    <div th:each="template : ${templateList}">
+        <label th:for="'template_' + ${template.key}">
+            <input th:id="'template_' + ${template.key}" type="radio" th:field="*{selectedTemplateId}"
+                   th:value="${template.key()}"/>
+            <span class="radio-label">
+                <strong th:text="${template.name}"></strong>
+                <span class="description" th:text="${template.description}"></span>
+            </span>
+        </label>
+    </div>
+
+    <div th:replace="~{fragments :: formButtons}"></div>
+</form>
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+@Library('jeap-microservice-pipeline@v2') _
+
+jeapBuildPipeline(
+        deploymentJobName: 'BIT/JME/bit_jme.bit-jme-app.gitops-deployment',
+        mavenImage: 'bit/eclipse-temurin:21',
+        mavenDockerUser: 'jenkins',
+        importAWSCredentialsFromVault: true,
+        branch: [
+                FEATURE: [
+                        qualityCheck           : true,
+                        deployStage            : 'dev',
+                        publish                : true,
+                        buildNumberGenerator   : ch.admin.bit.jeap.microservicePipeline.branching.BuildNumberGenerator.TIMESTAMP_SNAPSHOT
+                ]
+        ]
+)

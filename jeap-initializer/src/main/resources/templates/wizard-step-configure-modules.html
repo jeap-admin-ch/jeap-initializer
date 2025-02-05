@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>jEAP Initializer - Configure Module Parameters</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+</head>
+
+<body>
+<h1>Configure Optional Modules</h1>
+
+<form th:action="@{/wizard/step/configure-modules}" th:object="${moduleConfigurationModel}" method="post"
+      autocomplete="off">
+
+    <p>Please enter the parameters for the selected optional modules:</p>
+
+    <div th:replace="~{fragments :: errorList}"></div>
+
+    <input type="hidden" th:name="templateSelectionModel"
+           th:value="${#conversions.convert(templateSelectionModel, 'java.lang.String')}"/>
+    <input type="hidden" th:name="templateConfigurationModel"
+           th:value="${#conversions.convert(templateConfigurationModel, 'java.lang.String')}"/>
+
+    <div th:each="moduleParameter : ${moduleParameters}">
+        <label th:text="${moduleParameter.name}" th:for="${moduleParameter.id}">:</label>
+        <input type="text" th:id="${moduleParameter.id}" th:name="${moduleParameter.id}"
+               th:value="${moduleConfigurationModel.moduleParameterValues[moduleParameter.id]}"
+               th:placeholder="${moduleParameter.description}" required/>
+        <br/>
+    </div>
+
+    <div th:replace="~{fragments :: formButtons}"></div>
+</form>
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

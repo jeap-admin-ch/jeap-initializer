@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>jEAP Initializer - Generate Application</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+    <script lang="javascript">
+        function disableGenerateButton() {
+            document.getElementById("submit-button").disabled = true;
+            // re-enable button after 10sec
+            setTimeout(function () {
+                document.getElementById("submit-button").disabled = false;
+            }, 10000);
+        }
+    </script>
+</head>
+
+<body>
+
+<h1>Generate Application</h1>
+
+<form th:action="@{/wizard/step/generate}" method="post" autocomplete="off"
+      onsubmit="disableGenerateButton()">
+
+    <input type="hidden" th:name="templateSelectionModel"
+           th:value="${#conversions.convert(templateSelectionModel, 'java.lang.String')}"/>
+    <input type="hidden" th:name="templateConfigurationModel"
+           th:value="${#conversions.convert(templateConfigurationModel, 'java.lang.String')}"/>
+    <input type="hidden" th:name="moduleConfigurationModel"
+           th:value="${#conversions.convert(moduleConfigurationModel, 'java.lang.String')}"/>
+
+    <p>Review your selection and generate the application:</p>
+    <p>System Name: <span class="parameter-value" th:text="${templateConfigurationModel.systemName}"></span></p>
+    <p>Template ID: <span class="parameter-value" th:text="${templateSelectionModel.selectedTemplateId}"></span></p>
+    <p>Application Name: <span class="parameter-value" th:text="${templateConfigurationModel.applicationName}"></span>
+    </p>
+    <p>Base Package: <span class="parameter-value" th:text="${templateConfigurationModel.basePackage}"></span></p>
+    <p>Group ID: <span class="parameter-value" th:text="${templateConfigurationModel.groupId}"></span></p>
+    <p>Department: <span class="parameter-value" th:text="${templateConfigurationModel.department}"></span></p>
+    <hr/>
+
+    <p>Template Parameters:</p>
+    <div th:each="tpv : ${templateConfigurationModel.templateParameterValues}">
+        <p class="parameter-name" th:text="${tpv.key} + ':'"></p>
+        <span class="parameter-value" th:text="${tpv.value}"></span>
+    </div>
+
+    <p th:unless="${moduleConfigurationModel.moduleParameterValues.isEmpty()}">Module Parameters:</p>
+    <div th:each="mpv : ${moduleConfigurationModel.moduleParameterValues}">
+        <p class="parameter-name" th:text="${mpv.key} + ':'"></p>
+        <span class="parameter-value" th:text="${mpv.value}"></span>
+    </div>
+
+    <div th:replace="~{fragments :: formButtons(label='Generate Project')}"></div>
+</form>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+</body>
+</html>

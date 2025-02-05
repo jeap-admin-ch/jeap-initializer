@@ -1,0 +1,15 @@
+@Library('jeap-aws-pipeline@v1') _
+
+gitOpsDeploymentPipeline(
+    mavenImage: 'bit/eclipse-temurin:21',
+    mavenDockerUser: 'jenkins',
+    awsClusterName: 'jme',
+    serviceName: 'bit-jme-app',
+    githubOrganizationName: 'NIVEL-WORKSPACES',
+    githubRepositoryName: 'nivel-jme'
+// START INITIALIZER DELETE
+    ,vaultUrlsByEnvironment: [
+        'dev': 'https://osb-009099e2-3e3-vault.svc.ccp02.atlantica.admin.ch'
+    ]
+// END INITIALIZER DELETE
+)

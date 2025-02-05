@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--suppress HtmlFormInputWithoutLabel -->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>jEAP Initializer - Configure Template</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+</head>
+<body>
+
+<h1>Configure Template</h1>
+<form th:action="@{/wizard/step/configure-template}" th:object="${templateConfigurationModel}" method="post"
+      autocomplete="off">
+
+    <p>Please enter the parameters for this template:</p>
+
+    <div th:replace="~{fragments :: errorList}"></div>
+
+    <input type="hidden" th:name="templateSelectionModel"
+           th:value="${#conversions.convert(templateSelectionModel, 'java.lang.String')}"/>
+
+    <label th:for="systemName">System name:</label>
+    <input type="text" th:field="*{systemName}" th:id="systemName" th:name="systemName" th:placeholder="'jme'" required>
+    <br/>
+    <label th:for="department">Federal department:</label>
+    <input type="text" th:field="*{department}" th:id="department" th:name="department" th:placeholder="'BIT'"
+           required/>
+    <br/>
+    <label th:for="applicationName">Application name:</label>
+    <input type="text" th:field="*{applicationName}" th:id="applicationName" th:name="applicationName"
+           th:placeholder="'My jEAP Project'" required/>
+    <br/>
+    <label th:for="artifactId">Artifact id:</label>
+    <input type="text" th:field="*{artifactId}" th:id="artifactId" th:name="artifactId" th:placeholder="'my-app'"
+           required/>
+    <br/>
+    <label th:for="groupId">Group id:</label>
+    <input type="text" th:field="*{groupId}" th:id="groupId" th:name="groupId" th:placeholder="'ch.admin.bit'"
+           required/>
+    <br/>
+    <label th:for="basePackage">Base Java package:</label>
+    <input type="text" th:field="*{basePackage}" th:id="basePackage" th:name="basePackage"
+           th:placeholder="'ch.admin.bit.jme'" required/>
+    <br/>
+
+    <div th:each="templateParameter : ${templateParameters}">
+        <label th:text="${templateParameter.name}" th:for="${templateParameter.id}">:</label>
+        <input type="text" th:value="${templateConfigurationModel.templateParameterValues[templateParameter.id]}"
+               th:id="${templateParameter.id}" th:name="${templateParameter.id}"
+               th:placeholder="${templateParameter.description}" required/>
+        <br/>
+    </div>
+
+    <hr/>
+    <p>Please select optional modules to include:</p>
+
+    <div th:each="module : ${moduleList}">
+        <label th:for="'module_' + ${module.id()}">
+            <input th:id="'module_' + ${module.id()}" type="checkbox" th:field="*{selectedModuleIds}"
+                   th:value="${module.id()}"/>
+            <span class="radio-label">
+                <strong th:text="${module.name()}"></strong>
+                <span class="description" th:text="${module.description()}"></span>
+            </span>
+        </label>
+    </div>
+
+    <div th:replace="~{fragments :: formButtons}"></div>
+</form>
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

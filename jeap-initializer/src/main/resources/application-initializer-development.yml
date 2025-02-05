@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: jeap-initializer-service
+
+server:
+  port: 8080
+  servlet:
+    context-path: /${spring.application.name}
+
+jeap:
+  swagger:
+    status: OPEN
+  monitor:
+    prometheus:
+      secure: false
+  initializer:
+    templates:
+      jeap-scs:
+        repository-configuration:
+          url: https://bitbucket.bit.admin.ch/scm/BIT_JME/jme-jeap-nivel-quadrel-project-template.git
+          reference: master
+

@@ -1,0 +1,130 @@
+body {
+    background-color: white;
+    font-family: 'Helvetica', Arial, sans-serif;
+    color: #005f99;
+    text-align: center;
+}
+
+h2 {
+    color: #004080;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.form-button {
+    background-color: #004080;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.form-button:hover {
+    background-color: #0059b3;
+}
+
+.form-button.reset-button {
+    background-color: #7e6a5a;
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.errmsg {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+    background-color: #f0f8ff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="radio"] {
+    margin-right: 5px;
+    vertical-align: top;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: top;
+}
+
+.radio-label {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+footer {
+    margin-top: 15px;
+}
+
+p {
+    color: #003366;
+}
+
+div {
+    margin-bottom: 15px;
+}
+
+strong {
+    color: #00264d;
+}
+
+.parameter-name {
+    display: inline;
+}
+
+.parameter-value {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    font-style: italic;
+    font-weight: 300;
+    display: inline;
+    margin-top: 5px;
+}
+
+.description {
+    font-size: 0.9em;
+    color: #a0a0a0;
+    font-style: italic;
+    font-weight: 300;
+    display: block;
+    margin-top: 5px;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: #005f99;
+    margin: 20px 0;
+}
