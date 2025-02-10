@@ -5,7 +5,7 @@ Third-Party Dependency Licenses
 Third-party dependencies grouped by their license type (see [pom.xml](/pom.xml) for version information):
 
 
-Apache License, Version 2.0
+Apache License Version 2.0
 -------------------------------
 
  * jeap-spring-boot-application-starter - [ch.admin.bit.jeap:jeap-spring-boot-application-starter](https://github.com/jeap-admin-ch/jeap-spring-boot-starters/tree/main/jeap-spring-boot-application-starter)
