@@ -31,6 +31,7 @@ class DefaultGitServiceTest {
         FileUtils.copyDirectory(new File("src/test/resources/test-git-service"), repoDir);
         Git newRepo = Git.init()
                 .setDirectory(repoDir)
+                .setInitialBranch("master")
                 .call();
         newRepo.add()
                 .addFilepattern("README.md")
@@ -39,34 +40,26 @@ class DefaultGitServiceTest {
                 .setMessage("Initial revision")
                 .call();
 
-        // Check if the branch already exists
-        boolean branchExists = newRepo.branchList()
-                .call()
-                .stream()
-                .anyMatch(ref -> ref.getName().equals("refs/heads/feature/branch-for-tests"));
+        // Create a new branch and add a commit
+        newRepo.branchCreate()
+                .setName("feature/branch-for-tests")
+                .call();
+        newRepo.checkout()
+                .setName("feature/branch-for-tests")
+                .call();
+        File readmeFile = new File(repoDir, "README.md");
+        FileUtils.writeStringToFile(readmeFile, "This file is part of a branch", "UTF-8");
+        newRepo.add()
+                .addFilepattern("README.md")
+                .call();
+        newRepo.commit()
+                .setMessage("Add README.md for feature branch")
+                .call();
 
-        if (!branchExists) {
-            // Create a new branch and add a commit
-            newRepo.branchCreate()
-                    .setName("feature/branch-for-tests")
-                    .call();
-            newRepo.checkout()
-                    .setName("feature/branch-for-tests")
-                    .call();
-            File readmeFile = new File(repoDir, "README.md");
-            FileUtils.writeStringToFile(readmeFile, "This file is part of a branch", "UTF-8");
-            newRepo.add()
-                    .addFilepattern("README.md")
-                    .call();
-            newRepo.commit()
-                    .setMessage("Add README.md for feature branch")
-                    .call();
-
-            // Checkout back to master
-            newRepo.checkout()
-                    .setName("master")
-                    .call();
-        }
+        // Checkout back to master
+        newRepo.checkout()
+                .setName("master")
+                .call();
 
         newRepo.close();
         repoUrl = "file://" + repoDir.getAbsolutePath();
