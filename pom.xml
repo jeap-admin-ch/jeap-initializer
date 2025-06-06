@@ -36,6 +36,7 @@
     </properties>
 
     <artifactId>jeap-initializer-parent</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <version>2.11.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 

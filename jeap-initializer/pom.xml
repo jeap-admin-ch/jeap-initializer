@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>jeap-initializer</artifactId>
-    <name>${project.artifactId}</name>
+    <name>${project.groupId}:${project.artifactId}</name>
     <packaging>jar</packaging>
 
     <properties>
