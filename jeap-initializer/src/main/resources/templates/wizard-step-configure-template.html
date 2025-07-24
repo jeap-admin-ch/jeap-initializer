@@ -50,18 +50,20 @@
         <br/>
     </div>
 
-    <hr/>
-    <p>Please select optional modules to include:</p>
+    <div th:if="${!moduleList.isEmpty()}">
+        <hr/>
+        <p>Please select optional modules to include:</p>
 
-    <div th:each="module : ${moduleList}">
-        <label th:for="'module_' + ${module.id()}">
-            <input th:id="'module_' + ${module.id()}" type="checkbox" th:field="*{selectedModuleIds}"
-                   th:value="${module.id()}"/>
-            <span class="radio-label">
-                <strong th:text="${module.name()}"></strong>
-                <span class="description" th:text="${module.description()}"></span>
-            </span>
-        </label>
+        <div th:each="module : ${moduleList}">
+            <label th:for="'module_' + ${module.id()}">
+                <input th:id="'module_' + ${module.id()}" type="checkbox" th:field="*{selectedModuleIds}"
+                       th:value="${module.id()}"/>
+                <span class="radio-label">
+                    <strong th:text="${module.name()}"></strong>
+                    <span class="description" th:text="${module.description()}"></span>
+                </span>
+            </label>
+        </div>
     </div>
 
     <div th:replace="~{fragments :: formButtons}"></div>

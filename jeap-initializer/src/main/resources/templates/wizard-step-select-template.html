@@ -15,14 +15,14 @@
 
     <div th:replace="~{fragments :: errorList}"></div>
 
-    <div th:each="template : ${templateList}">
+    <div th:each="template : ${templateList}" class="template-option">
         <label th:for="'template_' + ${template.key}">
             <input th:id="'template_' + ${template.key}" type="radio" th:field="*{selectedTemplateId}"
                    th:value="${template.key()}"/>
-            <span class="radio-label">
+            <div class="radio-label">
                 <strong th:text="${template.name}"></strong>
                 <span class="description" th:text="${template.description}"></span>
-            </span>
+            </div>
         </label>
     </div>
 
