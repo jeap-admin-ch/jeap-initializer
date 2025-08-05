@@ -9,10 +9,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static io.micrometer.common.util.StringUtils.isBlank;
@@ -52,14 +54,54 @@ public class FolderRenamerContributor implements ProjectContributor {
         Path sourcePath = Path.of(srcFolder.toString() + mavenPath + sourcePackageFolder);
         Path targetPath = Path.of(srcFolder.toString() + mavenPath + targetPackageFolder);
 
-        if (Files.exists(sourcePath)) {
-            try {
-                Files.createDirectories(targetPath);
-                Files.move(sourcePath, targetPath, StandardCopyOption.ATOMIC_MOVE);
-                log.debug("Moved source path {} to {}", sourcePath, targetPath);
-            } catch (IOException e) {
-                throw FileProcessingException.ioException(e);
+        if (!Files.exists(sourcePath)) {
+            return;
+        }
+
+        // Normalize to absolute paths to make startsWith behave predictably
+        Path src = sourcePath.toAbsolutePath().normalize();
+        Path tgt = targetPath.toAbsolutePath().normalize();
+
+        if (src.equals(tgt)) {
+            // Nothing to do
+            return;
+        }
+
+        try {
+            if (!tgt.startsWith(src)) {
+                Files.createDirectories(tgt.getParent());
+                moveAtomicWithFallback(src, tgt);
+                log.debug("Moved source path {} to {}", src, tgt);
+            } else {
+                moveToSubDir(src, tgt);
+                log.debug("Moved source path {} to subpath {}", src, tgt);
             }
+        } catch (IOException e) {
+            throw FileProcessingException.ioException(e);
+        }
+    }
+
+    private static void moveToSubDir(Path src, Path tgt) throws IOException {
+        Path sourceParent = src.getParent();
+        if (sourceParent == null) {
+            throw new IllegalArgumentException("Source directory must have a parent: " + src);
+        }
+
+        // rename source directory to a temp sibling
+        String sourceDirname = src.getFileName().toString();
+        Path tmp = sourceParent.resolve(sourceDirname + ".tmp-" + UUID.randomUUID());
+        moveAtomicWithFallback(src, tmp);
+
+        // move tmp into the desired subdir of the source directory
+        Files.createDirectories(tgt.getParent());
+        moveAtomicWithFallback(tmp, tgt);
+    }
+
+    private static void moveAtomicWithFallback(Path from, Path to) throws IOException {
+        try {
+            Files.move(from, to, StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(from, to);
         }
     }
 

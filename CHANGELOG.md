@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.18.1] - 2025-08-05
+
+### Changed
+
+- Fixed an IO Exception being thrown when the target package of a request was a subpackage of the template package.
+
 ## [2.18.0] - 2025-08-05
 
 ### Changed
