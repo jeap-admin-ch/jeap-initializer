@@ -4,6 +4,7 @@ import ch.admin.bit.jeap.initializer.config.JeapInitializerProperties;
 import ch.admin.bit.jeap.initializer.model.ProjectRequest;
 import ch.admin.bit.jeap.initializer.model.ProjectTemplate;
 import ch.admin.bit.jeap.initializer.util.FileUtils;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -40,6 +41,14 @@ public class ParameterReplacementContributor implements ProjectContributor {
     @Override
     public void contribute(Path projectRoot, ProjectRequest projectRequest, ProjectTemplate template) throws IOException {
         FileUtils.walkMatchingFiles(projectRoot, sourceFilesPattern, path -> replaceParameters(path, projectRequest));
+    }
+
+    @Override
+    public int getOrder() {
+        // We want this contributor to have a high priority as it operates rather locally on a part of a file. We would like
+        // this contributor to make its contribution before more global contributors like the PropertyFilesContributor
+        // (system name, artifact id, context path in configuration files) apply their contributions.
+        return Ordered.HIGHEST_PRECEDENCE + 10;
     }
 
     private void replaceParameters(Path path, ProjectRequest projectRequest) throws IOException {
