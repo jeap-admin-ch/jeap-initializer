@@ -14,11 +14,18 @@ softwareType: library
 description:
   en:
     localisedName: jeap-initializer
-    shortDescription: TODO (Max. 150 characters)
+    shortDescription: A library for generating a ready-to-use project skeleton from self-contained Git-hosted templates.
     longDescription: >
-      TODO (Min. 150 characters)
+      This library allows teams to bootstrap new projects by generating complete,
+      ready-to-use codebases from existing project templates stored in Git repositories.
+      Unlike typical initializer tools, it bases the generated output on real, tested,
+      and version-controlled projects. Templates can evolve independently of the
+      initializer, benefit from their own CI/CD pipelines, and be expanded with new
+      options via configuration.
     features:
-      - TODO
+      - Generates codebases from version-controlled, tested Git-based templates
+      - Provides a simple UI for selecting and configuring templates
+      - Allows adding new templates through configuration
 legal:
   license: Apache-2.0
 maintenance:
