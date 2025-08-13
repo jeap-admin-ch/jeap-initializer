@@ -1,0 +1,16 @@
+{
+  "branch" : {
+    "master" : {
+      "publish" : true,
+      "buildNumberGenerator" : "TIMESTAMP",
+      "qualityCheck" : true,
+      "deployStage" : "dev"
+    },
+    "feature" : {
+      "publish" : true,
+      "buildNumberGenerator" : "TIMESTAMP_SNAPSHOT",
+      "qualityCheck" : true,
+      "deployStage" : "dev"
+    }
+  }
+}

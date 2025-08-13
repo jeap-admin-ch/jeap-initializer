@@ -1,0 +1,10 @@
+{
+  "branch" : {
+    "feature" : {
+      "publish" : true,
+      "buildNumberGenerator" : "TIMESTAMP_SNAPSHOT",
+      "qualityCheck" : true,
+      "deployStage" : "dev"
+    }
+  }
+}
