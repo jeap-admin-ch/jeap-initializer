@@ -111,4 +111,22 @@ class ArtifactIdContributorTest {
         assertFalse(jenkinsFile.contains("bit-jme-app"));
     }
 
+    @Test
+    void gitHubFilesAreAdapted() throws IOException {
+        Path gitHubDirectory = tempDir.resolve(".github");
+        createDirectories(gitHubDirectory);
+        addTestFileToFolder("jeapDeployPipelineConfig.json", gitHubDirectory);
+
+        ProjectTemplate template = new ProjectTemplate();
+        template.setArtifactId("bit-jme-app");
+        ProjectRequest request = new ProjectRequest();
+        request.setArtifactId("my-application");
+
+        contributor.contribute(tempDir, request, template);
+
+        String gitOpsJenkinsFile = Files.readString(Path.of(gitHubDirectory + "/jeapDeployPipelineConfig.json"));
+        assertTrue(gitOpsJenkinsFile.contains("\"serviceName\" : \"my-application\""));
+        assertFalse(gitOpsJenkinsFile.contains("bit-jme-app"));
+    }
+
 }

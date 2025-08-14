@@ -1,0 +1,10 @@
+{
+  "gitHubOrganizationName" : "NIVEL-WORKSPACES",
+  "gitHubRepositoryName" : "nivel-jme",
+  "serviceName" : "bit-jme-app",
+  "awsClusterName" : "jme",
+  "awsRegion" : "eu-central-2",
+  "awsAccounts" : {
+    "dev" : "654654230768"
+  }
+}
