@@ -31,7 +31,7 @@ public class TemplateService {
                 .stream()
                 .parallel()
                 .map(templateRepository::getTemplate)
-                .sorted(Comparator.comparing(ProjectTemplate::getKey))
+                .sorted(Comparator.comparing(ProjectTemplate::getName))
                 .toList();
     }
 

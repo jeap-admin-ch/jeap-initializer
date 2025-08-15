@@ -38,7 +38,7 @@
 
     <artifactId>jeap-initializer-parent</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>2.19.1-SNAPSHOT</version>
+    <version>2.19.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>ch.admin.bit.jeap</groupId>
                 <artifactId>jeap-initializer</artifactId>
-                <version>2.19.1-SNAPSHOT</version>
+                <version>2.19.2-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

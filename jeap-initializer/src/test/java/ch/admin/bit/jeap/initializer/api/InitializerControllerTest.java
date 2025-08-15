@@ -115,9 +115,21 @@ class InitializerControllerTest {
                 .toEntity(LIST_PROJECTTEMPLATEDTO_TYPE_REF);
         List<ProjectTemplateDTO> templates = getTemplatesResponse.getBody();
         assertThat(templates.size()).isEqualTo(2);
-        ProjectTemplateDTO template = templates.get(1);
+        ProjectTemplateDTO template = templates.get(0);
         assertThat(template.key()).isEqualTo("jeap-scs");
-        assertThat(template.name()).isEqualTo("My template");
+        assertThat(template.name()).isEqualTo("a My template");
+        assertThat(template.description()).isEqualTo("Some description");
+        assertThat(template.templateParameters().size()).isEqualTo(2);
+        assertThat(template.templateParameters().getFirst().getId()).isEqualTo("templateParameter1");
+        assertThat(template.templateParameters().getFirst().getName()).isEqualTo("Template Parameter 1");
+        assertThat(template.templateParameters().getFirst().getDescription()).isEqualTo("Description of templateParameter1");
+        assertThat(template.templateParameters().getLast().getId()).isEqualTo("templateParameter2");
+        assertThat(template.templateParameters().getLast().getName()).isEqualTo("Template Parameter 2");
+        assertThat(template.templateParameters().getLast().getDescription()).isEqualTo("Description of templateParameter2");
+
+        template = templates.get(1);
+        assertThat(template.key()).isEqualTo("gitops-template");
+        assertThat(template.name()).isEqualTo("b My template");
         assertThat(template.description()).isEqualTo("Some description");
         assertThat(template.templateParameters().size()).isEqualTo(2);
         assertThat(template.templateParameters().getFirst().getId()).isEqualTo("templateParameter1");
