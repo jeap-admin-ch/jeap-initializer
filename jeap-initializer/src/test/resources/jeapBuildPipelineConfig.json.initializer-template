@@ -1,4 +1,11 @@
 {
+  "docker" : {
+    "buildImageFromDockerfile" : true,
+    "imageRegistryAwsAccountId" : "654654230768",
+    "imagesToBuild" : [ {
+      "dockerfilePath" : "jme-jeap-nivel-quadrel-project-template-web/Dockerfile"
+    } ]
+  },
   "branch" : {
     "feature" : {
       "publish" : true,

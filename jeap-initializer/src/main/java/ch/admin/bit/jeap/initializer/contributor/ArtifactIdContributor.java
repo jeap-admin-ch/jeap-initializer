@@ -34,6 +34,8 @@ public class ArtifactIdContributor implements ProjectContributor {
         replaceInFiles("pom.xml", projectRoot, template.getArtifactId(), projectRequest.getArtifactId());
         replaceInFiles("jenkinsfile(.*)", projectRoot, template.getArtifactId(), projectRequest.getArtifactId());
         replaceInFiles("jeapDeployPipelineConfig.json", projectRoot, template.getArtifactId(), projectRequest.getArtifactId());
+        replaceInFiles("jeapBuildPipelineConfig.json(.*)", projectRoot, template.getArtifactId(), projectRequest.getArtifactId());
+        replaceInFiles("Dockerfile", projectRoot, template.getArtifactId(), projectRequest.getArtifactId());
 
         // Replacements in the UI-Module
         replaceInFiles("angular.json", projectRoot, template.getArtifactId(), projectRequest.getArtifactId());

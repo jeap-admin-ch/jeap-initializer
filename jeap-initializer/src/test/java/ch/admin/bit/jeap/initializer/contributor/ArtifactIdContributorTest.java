@@ -52,10 +52,10 @@ class ArtifactIdContributorTest {
 
         contributor.contribute(tempDir, request, template);
 
-        assertTrue(exists(Path.of( tempDir + "/my-application-ui")));
-        assertTrue(exists(Path.of( tempDir + "/my-application-service")));
-        assertFalse(exists(Path.of( tempDir + "/bit-jme-app-ui")));
-        assertFalse(exists(Path.of( tempDir + "/bit-jme-app-service")));
+        assertTrue(exists(Path.of(tempDir + "/my-application-ui")));
+        assertTrue(exists(Path.of(tempDir + "/my-application-service")));
+        assertFalse(exists(Path.of(tempDir + "/bit-jme-app-ui")));
+        assertFalse(exists(Path.of(tempDir + "/bit-jme-app-service")));
     }
 
     @Test
@@ -89,7 +89,6 @@ class ArtifactIdContributorTest {
     }
 
 
-
     @Test
     void jenkinsFilesAreAdapted() throws IOException {
         addTestFileToFolder("Jenkinsfile.gitops-deployment", tempDir);
@@ -112,7 +111,7 @@ class ArtifactIdContributorTest {
     }
 
     @Test
-    void gitHubFilesAreAdapted() throws IOException {
+    void gitHubDeployFileIsAdapted() throws IOException {
         Path gitHubDirectory = tempDir.resolve(".github");
         createDirectories(gitHubDirectory);
         addTestFileToFolder("jeapDeployPipelineConfig.json", gitHubDirectory);
@@ -124,9 +123,47 @@ class ArtifactIdContributorTest {
 
         contributor.contribute(tempDir, request, template);
 
-        String gitOpsJenkinsFile = Files.readString(Path.of(gitHubDirectory + "/jeapDeployPipelineConfig.json"));
-        assertTrue(gitOpsJenkinsFile.contains("\"serviceName\" : \"my-application\""));
-        assertFalse(gitOpsJenkinsFile.contains("bit-jme-app"));
+        String deployFile = Files.readString(Path.of(gitHubDirectory + "/jeapDeployPipelineConfig.json"));
+        assertTrue(deployFile.contains("\"serviceName\" : \"my-application\""));
+        assertFalse(deployFile.contains("bit-jme-app"));
+    }
+
+    @Test
+    void gitHubBuildFilesAreAdapted() throws IOException {
+        Path gitHubDirectory = tempDir.resolve(".github");
+        createDirectories(gitHubDirectory);
+        addTestFileToFolder("jeapBuildPipelineConfig.json", gitHubDirectory);
+        addTestFileToFolder("jeapBuildPipelineConfig.json.initializer-template", gitHubDirectory);
+
+        ProjectTemplate template = new ProjectTemplate();
+        template.setArtifactId("jme-jeap-nivel-quadrel-project-template");
+        ProjectRequest request = new ProjectRequest();
+        request.setArtifactId("jme-my-app");
+
+        contributor.contribute(tempDir, request, template);
+
+        String buildFile = Files.readString(Path.of(gitHubDirectory + "/jeapBuildPipelineConfig.json"));
+        assertTrue(buildFile.contains("\"dockerfilePath\" : \"jme-my-app-web/Dockerfile\""));
+        assertFalse(buildFile.contains("jme-jeap-nivel-quadrel-project-template"));
+        String buildTemplateFile = Files.readString(Path.of(gitHubDirectory + "/jeapBuildPipelineConfig.json.initializer-template"));
+        assertTrue(buildTemplateFile.contains("\"dockerfilePath\" : \"jme-my-app-web/Dockerfile\""));
+        assertFalse(buildTemplateFile.contains("jme-jeap-nivel-quadrel-project-template"));
+    }
+
+    @Test
+    void dockerfileFileIsAdapted() throws IOException {
+        addTestFileToFolder("Dockerfile", tempDir);
+
+        ProjectTemplate template = new ProjectTemplate();
+        template.setArtifactId("jme-jeap-nivel-quadrel-project-template");
+        ProjectRequest request = new ProjectRequest();
+        request.setArtifactId("my-application");
+
+        contributor.contribute(tempDir, request, template);
+
+        String deployFile = Files.readString(Path.of(tempDir + "/Dockerfile"));
+        assertTrue(deployFile.contains("COPY target/my-application-web.jar app.jar"));
+        assertFalse(deployFile.contains("jme-jeap-nivel-quadrel-project-template"));
     }
 
 }
