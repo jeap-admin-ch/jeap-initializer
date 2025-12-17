@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: my-app
+server:
+  servlet:
+    context-path: /${spring.application.name}
+
+jeap:
+  security:
+    oauth2:
+      resourceserver:
+        system-name: "jme"
