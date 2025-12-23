@@ -18,7 +18,7 @@ public class JeapInitializerProperties implements InitializingBean {
 
     private Duration templateCacheDuration = Duration.ofHours(4);
 
-    private Pattern sourceFilesPattern = Pattern.compile("Dockerfile|Jenkinsfile.*|(.+\\.(md|html|css|java|xml|yaml|yml|properties|json|conf|ts))", Pattern.CASE_INSENSITIVE);
+    private Pattern sourceFilesPattern = Pattern.compile("CODEOWNERS|Dockerfile|Jenkinsfile.*|(.+\\.(md|html|css|java|xml|yaml|yml|properties|json|conf|ts))", Pattern.CASE_INSENSITIVE);
 
     private Map<String, ProjectTemplateProperties> templates = new LinkedHashMap<>();
 
