@@ -1,21 +1,14 @@
 package ch.admin.bit.jeap.initializer.util;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-@Slf4j
 public class FileUtils {
-
-    private FileUtils() {
-    }
 
     public static void replaceInFiles(String fileNamePatternString, Path projectRoot, String original, String replacement) {
         Pattern fileNamePattern = Pattern.compile(fileNamePatternString, Pattern.CASE_INSENSITIVE);
@@ -107,30 +100,5 @@ public class FileUtils {
                 Files.writeString(matchingFile, updatedContent);
             }
         });
-    }
-
-    public static void overwriteFileContent(String fileName, Path projectRoot, String text) {
-        Pattern fileNamePattern = Pattern.compile(Pattern.quote(fileName), Pattern.CASE_INSENSITIVE);
-        AtomicInteger overwrittenFiles = new AtomicInteger(0);
-
-        walkMatchingFiles(projectRoot, fileNamePattern, matchingFile -> {
-            Files.writeString(matchingFile, text);
-            overwrittenFiles.incrementAndGet();
-        });
-
-        if (overwrittenFiles.get() == 0) {
-            try {
-                Path targetFile = projectRoot.resolve(fileName);
-                Path parent = targetFile.getParent();
-                if (parent != null) {
-                    Path newDirectory = Files.createDirectories(parent);
-                    log.debug("Folder [{}] has been created.", newDirectory);
-                }
-                Files.writeString(targetFile, text);
-            } catch (IOException e) {
-                log.error("Write in the File [{}], in the folder [{}], is not possible.", fileName, projectRoot);
-                throw FileProcessingException.ioException(e);
-            }
-        }
     }
 }
