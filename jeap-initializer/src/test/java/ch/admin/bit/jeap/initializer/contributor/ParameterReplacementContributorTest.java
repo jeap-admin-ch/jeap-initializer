@@ -19,6 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ParameterReplacementContributorTest {
 
+    private static final String CODEOWNERS_FILE = "CODEOWNERS";
+    private static final String CODE_OWNERS_ID = "codeOwners";
+    public static final String NEW_TEAM = "@BAZG-System/bazg-system-bazg-saluver";
+    public static final String OLD_TEAM = "@BIT-JME/bit-jme-bazg-margun";
+    private Pattern sourceFilesPattern = Pattern.compile("CODEOWNERS|Dockerfile|Jenkinsfile.*|(.+\\.(md|html|css|java|xml|yaml|yml|properties|json|conf|ts))", Pattern.CASE_INSENSITIVE);
+
     private ParameterReplacementContributor contributor;
     private ProjectRequest projectRequest;
     private ProjectTemplate projectTemplate;
@@ -29,7 +35,7 @@ class ParameterReplacementContributorTest {
     @BeforeEach
     void setUp() {
         JeapInitializerProperties properties = new JeapInitializerProperties();
-        properties.setSourceFilesPattern(Pattern.compile(".*\\.(java|json)"));
+        properties.setSourceFilesPattern(sourceFilesPattern);
         contributor = new ParameterReplacementContributor(properties);
         projectRequest = new ProjectRequest();
         projectTemplate = new ProjectTemplate();
@@ -112,5 +118,127 @@ class ParameterReplacementContributorTest {
                    "new-value"
                  ],
                 """);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterInCodeOwnerFile() throws IOException {
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, NEW_TEAM));
+
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(NEW_TEAM), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithFlix() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-flix";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithTaverna() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-taverna";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithGrischa() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-grischa";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithDuplicateTaverna() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-taverna";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithMultipleOwners() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-flix, @BAZG-System/bazg-system-bazg-taverna";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithSimilarNames() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-taverna; @BAZG-System/bazg-system-bazg-taverna-extra";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contributeReplacesCodeOwnersParameterWithNames() throws IOException {
+        String newTeam = "@BAZG-System/bazg-system-bazg-melnetta @BAZG-System/bazg-system-bazg-flix";
+        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
+        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
+        List<String> lines = List.of(
+                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
+                OLD_TEAM
+        );
+        Files.write(filePath, lines);
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+        List<String> updatedLines = Files.readAllLines(filePath);
+        assertEquals(List.of(newTeam), updatedLines);
     }
 }
