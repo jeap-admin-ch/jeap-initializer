@@ -58,7 +58,7 @@ public class ParameterReplacementContributor implements ProjectContributor {
     private void replaceParameters(Path path, ProjectRequest projectRequest) throws IOException {
         List<String> lines = new ArrayList<>(Files.readAllLines(path));
 
-        Pattern pattern = getParapeterPattern(path);
+        Pattern pattern = getParameterPattern(path);
 
         Map<String, String> params = new HashMap<>();
         List<String> updatedLines = lines.stream()
@@ -71,7 +71,7 @@ public class ParameterReplacementContributor implements ProjectContributor {
         }
     }
 
-    Pattern getParapeterPattern(Path path) {
+    Pattern getParameterPattern(Path path) {
         String fileName = PathUtils.getFileNameString(path);
         return CODEOWNERS_FILE.equals(fileName) ? CODE_OWNERS_PARAMETER_PATTERN : DEFAULT_PARAMETER_PATTERN;
     }

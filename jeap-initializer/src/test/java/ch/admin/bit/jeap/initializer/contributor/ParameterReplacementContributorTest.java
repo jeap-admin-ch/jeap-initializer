@@ -21,9 +21,12 @@ class ParameterReplacementContributorTest {
 
     private static final String CODEOWNERS_FILE = "CODEOWNERS";
     private static final String CODE_OWNERS_ID = "codeOwners";
-    public static final String NEW_TEAM = "@BAZG-System/bazg-system-bazg-saluver";
-    public static final String OLD_TEAM = "@BIT-JME/bit-jme-bazg-margun";
-    private Pattern sourceFilesPattern = Pattern.compile("CODEOWNERS|Dockerfile|Jenkinsfile.*|(.+\\.(md|html|css|java|xml|yaml|yml|properties|json|conf|ts))", Pattern.CASE_INSENSITIVE);
+    private static final String NEW_TEAM = "@BAZG-System/bazg-system-bazg-saluver";
+    private static final String OLD_TEAM = "@BIT-JME/bit-jme-bazg-margun";
+    private static final String BAZG_FLIX = "@BAZG-System/bazg-system-bazg-flix";
+    private static final String BAZG_TAVERNA = "@BAZG-System/bazg-system-bazg-taverna";
+    private static final String BAZG_GRISCHA = "@BAZG-System/bazg-system-bazg-grischa";
+    private static final Pattern sourceFilesPattern = Pattern.compile("CODEOWNERS|Dockerfile|Jenkinsfile.*|(.+\\.(md|html|css|java|xml|yaml|yml|properties|json|conf|ts))", Pattern.CASE_INSENSITIVE);
 
     private ParameterReplacementContributor contributor;
     private ProjectRequest projectRequest;
@@ -139,7 +142,7 @@ class ParameterReplacementContributorTest {
 
     @Test
     void contributeReplacesCodeOwnersParameterWithFlix() throws IOException {
-        String newTeam = "@BAZG-System/bazg-system-bazg-flix";
+        String newTeam = BAZG_FLIX;
         projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
         Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
         List<String> lines = List.of(
@@ -154,7 +157,7 @@ class ParameterReplacementContributorTest {
 
     @Test
     void contributeReplacesCodeOwnersParameterWithTaverna() throws IOException {
-        String newTeam = "@BAZG-System/bazg-system-bazg-taverna";
+        String newTeam = BAZG_TAVERNA;
         projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
         Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
         List<String> lines = List.of(
@@ -169,22 +172,7 @@ class ParameterReplacementContributorTest {
 
     @Test
     void contributeReplacesCodeOwnersParameterWithGrischa() throws IOException {
-        String newTeam = "@BAZG-System/bazg-system-bazg-grischa";
-        projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
-        Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
-        List<String> lines = List.of(
-                "INITIALIZER PARAMETER " + CODE_OWNERS_ID + " VALUE " + OLD_TEAM,
-                OLD_TEAM
-        );
-        Files.write(filePath, lines);
-        contributor.contribute(projectRoot, projectRequest, projectTemplate);
-        List<String> updatedLines = Files.readAllLines(filePath);
-        assertEquals(List.of(newTeam), updatedLines);
-    }
-
-    @Test
-    void contributeReplacesCodeOwnersParameterWithDuplicateTaverna() throws IOException {
-        String newTeam = "@BAZG-System/bazg-system-bazg-taverna";
+        String newTeam = BAZG_GRISCHA;
         projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
         Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
         List<String> lines = List.of(
@@ -199,7 +187,7 @@ class ParameterReplacementContributorTest {
 
     @Test
     void contributeReplacesCodeOwnersParameterWithMultipleOwners() throws IOException {
-        String newTeam = "@BAZG-System/bazg-system-bazg-flix, @BAZG-System/bazg-system-bazg-taverna";
+        String newTeam = BAZG_FLIX + ", " + BAZG_TAVERNA;
         projectRequest.setTemplateParameters(Map.of(CODE_OWNERS_ID, newTeam));
         Path filePath = projectRoot.resolve(CODEOWNERS_FILE);
         List<String> lines = List.of(
