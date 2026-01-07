@@ -26,8 +26,8 @@ public class JeapInitializerProperties implements InitializingBean {
     public void afterPropertiesSet() {
         templates.keySet().forEach(templateKey -> {
             ProjectTemplateProperties template = templates.get(templateKey);
-            Assert.notNull(template.getRepositoryConfiguration(), "'repositoryConfiguration' property block must be set for a template %s.".formatted(templateKey));
-            Assert.hasText(template.getRepositoryConfiguration().getUrl(), "'repositoryConfiguration.url' property must be set for a template %s.".formatted(templateKey));
+            Assert.notNull(template.getRepositoryConfiguration(), "'repositoryConfiguration' property block must be set for the template %s.".formatted(templateKey));
+            Assert.hasText(template.getRepositoryConfiguration().getUrl(), "'repositoryConfiguration.url' property must be set for the template %s.".formatted(templateKey));
         });
     }
 }
