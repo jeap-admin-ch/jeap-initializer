@@ -5,7 +5,6 @@ import ch.admin.bit.jeap.initializer.model.ProjectRequest;
 import ch.admin.bit.jeap.initializer.model.ProjectTemplate;
 import ch.admin.bit.jeap.initializer.util.FileUtils;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.file.PathUtils;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +31,7 @@ import java.util.stream.Collectors;
 @Component
 public class ParameterReplacementContributor implements ProjectContributor {
 
-    private static final Pattern DEFAULT_PARAMETER_PATTERN = Pattern.compile("INITIALIZER PARAMETER (.+) VALUE ([a-zA-Z0-9_\\-.]+)");
-    private static final Pattern CODE_OWNERS_PARAMETER_PATTERN = Pattern.compile("INITIALIZER PARAMETER (.+) VALUE (.+)");
-    private static final String CODEOWNERS_FILE = "CODEOWNERS";
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile("INITIALIZER PARAMETER (.+) VALUE (.+)");
 
     private final Pattern sourceFilesPattern;
 
@@ -58,22 +55,15 @@ public class ParameterReplacementContributor implements ProjectContributor {
     private void replaceParameters(Path path, ProjectRequest projectRequest) throws IOException {
         List<String> lines = new ArrayList<>(Files.readAllLines(path));
 
-        Pattern pattern = getParameterPattern(path);
-
         Map<String, String> params = new HashMap<>();
         List<String> updatedLines = lines.stream()
-                .filter(line -> !matchParameterDefinitionLineExtractingParameters(line, params, pattern))
+                .filter(line -> !matchParameterDefinitionLineExtractingParameters(line, params, PARAMETER_PATTERN))
                 .map(line -> replaceParams(line, params, projectRequest))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if (!CollectionUtils.isEqualCollection(updatedLines, lines)) {
             Files.write(path, updatedLines);
         }
-    }
-
-    Pattern getParameterPattern(Path path) {
-        String fileName = PathUtils.getFileNameString(path);
-        return CODEOWNERS_FILE.equals(fileName) ? CODE_OWNERS_PARAMETER_PATTERN : DEFAULT_PARAMETER_PATTERN;
     }
 
     private static boolean matchParameterDefinitionLineExtractingParameters(String line, Map<String, String> params, Pattern pattern) {

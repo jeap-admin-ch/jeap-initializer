@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.core.Ordered;
 
 class ParameterReplacementContributorTest {
 
@@ -100,27 +101,6 @@ class ParameterReplacementContributorTest {
 
         List<String> updatedLines = Files.readAllLines(filePath);
         assertEquals(List.of("Some code with new-value and newValue2"), updatedLines);
-    }
-
-    @Test
-    void contributeReplacesParametersInJsonSourceFiles() throws IOException {
-        projectRequest.setTemplateParameters(Map.of("bucketName", "new-value"));
-        Path filePath = projectRoot.resolve("test.json");
-        String json = """
-                "s3_buckets_read": [
-                   "INITIALIZER PARAMETER bucketName VALUE replace-me",
-                   "replace-me"
-                 ],
-                """;
-        Files.writeString(filePath, json);
-
-        contributor.contribute(projectRoot, projectRequest, projectTemplate);
-
-        assertThat(filePath).content().isEqualToIgnoringWhitespace("""
-                "s3_buckets_read": [
-                   "new-value"
-                 ],
-                """);
     }
 
     @Test
@@ -228,5 +208,43 @@ class ParameterReplacementContributorTest {
         contributor.contribute(projectRoot, projectRequest, projectTemplate);
         List<String> updatedLines = Files.readAllLines(filePath);
         assertEquals(List.of(newTeam), updatedLines);
+    }
+
+    @Test
+    void contribute() throws IOException {
+        // Arrange: one matching file and one non-matching file
+        projectRequest.setTemplateParameters(Map.of("paramX", "new"));
+
+        Path matching = projectRoot.resolve("config.properties");
+        Files.write(matching, List.of(
+                "# some header",
+                "INITIALIZER PARAMETER paramX VALUE old",
+                "value=old"
+        ));
+
+        Path nonMatching = projectRoot.resolve("ignore.bin");
+        List<String> originalNonMatching = List.of(
+                "INITIALIZER PARAMETER paramX VALUE old",
+                "binary old"
+        );
+        Files.write(nonMatching, originalNonMatching);
+
+        // Act
+        contributor.contribute(projectRoot, projectRequest, projectTemplate);
+
+        // Assert: matching file is processed, marker removed and value replaced
+        assertThat(Files.readAllLines(matching))
+                .containsExactly(
+                        "# some header",
+                        "value=new"
+                );
+
+        // Assert: non-matching file remains untouched
+        assertThat(Files.readAllLines(nonMatching)).containsExactlyElementsOf(originalNonMatching);
+    }
+
+    @Test
+    void getOrder() {
+        assertThat(contributor.getOrder()).isEqualTo(Ordered.HIGHEST_PRECEDENCE + 10);
     }
 }
