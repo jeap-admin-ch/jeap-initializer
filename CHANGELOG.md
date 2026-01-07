@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.39.0] - 2026-01-05
+
+### Changed
+
+- Support parameter replacement in CODEOWNERS files using the `codeOwners` template parameter.
+- Improve ParameterReplacementContributor to correctly remove parameter marker lines and replace subsequent placeholder values (e.g., JSON array entries following a marker).
+- Add and extend tests for parameter replacement in CODEOWNERS and JSON files to prevent regressions.
+- Miscellaneous cleanups and Sonar-driven quality improvements.
+
 ## [2.38.0] - 2026-01-07
 
 ### Changed
