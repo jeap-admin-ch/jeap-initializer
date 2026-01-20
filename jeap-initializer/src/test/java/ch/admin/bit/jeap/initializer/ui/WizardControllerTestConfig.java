@@ -1,9 +1,7 @@
 package ch.admin.bit.jeap.initializer.ui;
 
 import ch.admin.bit.jeap.initializer.config.WebSecurityConfig;
-import ch.admin.bit.jeap.initializer.model.ProjectTemplate;
-import ch.admin.bit.jeap.initializer.model.TemplateModule;
-import ch.admin.bit.jeap.initializer.model.TemplateParameter;
+import ch.admin.bit.jeap.initializer.model.*;
 import ch.admin.bit.jeap.initializer.template.TemplateRepository;
 import ch.admin.bit.jeap.initializer.template.TemplateService;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -31,6 +29,12 @@ class WizardControllerTestConfig {
                 template.setKey("test-template");
                 template.setName("Test Template");
                 template.setDescription("Description of the test template");
+                template.setPlatform("test-platform");
+                // Ensure repository configuration is present to satisfy TemplateService filtering
+                GitRepositoryConfiguration repoCfg = new GitRepositoryConfiguration();
+                repoCfg.setUrl("https://host/scm/" + key + "/repo.git");
+                template.setRepositoryConfiguration(repoCfg);
+
                 TemplateParameter templateParameter = new TemplateParameter("awsAccountId", "AWS Account ID", "ID of the AWS account");
                 template.getTemplateParameters().add(templateParameter);
                 TemplateModule templateModule = new TemplateModule();
@@ -40,6 +44,11 @@ class WizardControllerTestConfig {
                 templateModule.getModuleParameters().add(new TemplateParameter("bucketName", "Bucket Name", "Name of the S3 bucket"));
                 template.setTemplateModules(List.of(templateModule));
                 return template;
+            }
+
+            @Override
+            public Platform getConfiguredPlatform(String key) {
+                return new Platform(key, "App One", "Description for App One");
             }
         });
     }

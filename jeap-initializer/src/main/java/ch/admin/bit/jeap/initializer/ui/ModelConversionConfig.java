@@ -1,6 +1,7 @@
 package ch.admin.bit.jeap.initializer.ui;
 
 import ch.admin.bit.jeap.initializer.ui.model.ModuleConfigurationModel;
+import ch.admin.bit.jeap.initializer.ui.model.PlatformSelectionModel;
 import ch.admin.bit.jeap.initializer.ui.model.TemplateConfigurationModel;
 import ch.admin.bit.jeap.initializer.ui.model.TemplateSelectionModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +29,7 @@ public class ModelConversionConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addFormatterForFieldType(TemplateSelectionModel.class, new WizardStepModelFormatter<>(TemplateSelectionModel.class));
+        registry.addFormatterForFieldType(PlatformSelectionModel.class, new WizardStepModelFormatter<>(PlatformSelectionModel.class));
         registry.addFormatterForFieldType(TemplateConfigurationModel.class, new WizardStepModelFormatter<>(TemplateConfigurationModel.class));
         registry.addFormatterForFieldType(ModuleConfigurationModel.class, new WizardStepModelFormatter<>(ModuleConfigurationModel.class));
     }

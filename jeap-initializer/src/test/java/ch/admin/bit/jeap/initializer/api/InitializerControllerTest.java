@@ -155,6 +155,7 @@ class InitializerControllerTest {
 
     private static ProjectRequest getProjectRequest() {
         ProjectRequest projectRequest = new ProjectRequest();
+        projectRequest.setTemplate("jeap-scs"); // Set a valid template key
         Map<String, String> templateParameters = new HashMap<>();
         templateParameters.put("templateParameter1", "value1");
         templateParameters.put("templateParameter2", "value2");

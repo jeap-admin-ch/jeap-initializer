@@ -15,8 +15,14 @@ jeap:
       secure: false
   initializer:
     templates:
-      jeap-scs:
+      my-template:
         repository-configuration:
-          url: https://bitbucket.bit.admin.ch/scm/BIT_JME/jme-jeap-nivel-quadrel-project-template.git
+          url: https://server/repo.git
           reference: master
-
+    platforms:
+      my-cloud:
+        name: Cloud Platform
+        description: Some Cloud Platform
+      my-container-platform:
+        name: Container Platform
+        description: Some Container Platform

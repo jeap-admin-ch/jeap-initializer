@@ -48,41 +48,44 @@ public class TestConfig {
                             description: "Some description"
                             base-package: "ch.admin.bit.jme"
                             system-name: "jme"
+                            platform: "some-platform"
                             artifact-id: "my-app"
                             group-id: "ch.admin.bit.jeap"
                             """;
                 } else if (configuration.getUrl().contains("testhost2")) {
                     return """
-                        name: "b My template"
-                        description: "Some description"
-                        base-package: "ch.admin.bit.jme"
-                        system-name: "jme"
-                        artifact-id: "my-app"
-                        group-id: "ch.admin.bit.jeap"
-                        
-                        template-modules:
-                            - id: object-storage
-                              name: Object Storage Module
-                              description: Test module
-                              module-parameters:
-                                - id: moduleParameter1
-                                  name: Module Parameter 1
-                                  description: Test parameter for module
-                        
-                        template-parameters:
-                          - id: templateParameter1
-                            name: Template Parameter 1
-                            description: Description of templateParameter1
-                          - id: templateParameter2
-                            name: Template Parameter 2
-                            description: Description of templateParameter2
-                        """;
+                            name: "b My template"
+                            description: "Some description"
+                            base-package: "ch.admin.bit.jme"
+                            system-name: "jme"
+                            platform: "some-platform"
+                            artifact-id: "my-app"
+                            group-id: "ch.admin.bit.jeap"
+                            
+                            template-modules:
+                                - id: object-storage
+                                  name: Object Storage Module
+                                  description: Test module
+                                  module-parameters:
+                                    - id: moduleParameter1
+                                      name: Module Parameter 1
+                                      description: Test parameter for module
+                            
+                            template-parameters:
+                              - id: templateParameter1
+                                name: Template Parameter 1
+                                description: Description of templateParameter1
+                              - id: templateParameter2
+                                name: Template Parameter 2
+                                description: Description of templateParameter2
+                            """;
                 }
                 return """
                         name: "a My template"
                         description: "Some description"
                         base-package: "ch.admin.bit.jme"
                         system-name: "jme"
+                        platform: "some-platform"
                         artifact-id: "my-app"
                         group-id: "ch.admin.bit.jeap"
                         

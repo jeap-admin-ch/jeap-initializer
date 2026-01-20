@@ -3,14 +3,17 @@ package ch.admin.bit.jeap.initializer.ui;
 import ch.admin.bit.jeap.initializer.api.InitializerController;
 import ch.admin.bit.jeap.initializer.api.model.ProjectTemplateDTO;
 import ch.admin.bit.jeap.initializer.api.model.TemplateModuleDTO;
+import ch.admin.bit.jeap.initializer.model.Platform;
 import ch.admin.bit.jeap.initializer.model.TemplateParameter;
 import ch.admin.bit.jeap.initializer.template.TemplateService;
 import ch.admin.bit.jeap.initializer.ui.model.ModuleConfigurationModel;
+import ch.admin.bit.jeap.initializer.ui.model.PlatformSelectionModel;
 import ch.admin.bit.jeap.initializer.ui.model.TemplateConfigurationModel;
 import ch.admin.bit.jeap.initializer.ui.model.TemplateSelectionModel;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,47 +25,97 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/wizard")
 public class WizardController {
 
     // View rendering attributes
+    static final String PLATFORM_LIST = "platformList";
     static final String TEMPLATE_LIST = "templateList";
     static final String TEMPLATE_PARAMETERS = "templateParameters";
     static final String MODULE_LIST = "moduleList";
     // Models
+    static final String PLATFORM_SELECTION_MODEL = "platformSelectionModel";
     static final String TEMPLATE_SELECTION_MODEL = "templateSelectionModel";
     static final String TEMPLATE_CONFIGURATION_MODEL = "templateConfigurationModel";
     static final String MODULE_CONFIGURATION_MODEL = "moduleConfigurationModel";
+
+    private static final String FIRST_WIZARD_STEP_SELECT_PLATFORM = "wizard-step-select-platform";
+    private static final String SECOND_WIZARD_STEP_SELECT_TEMPLATE = "wizard-step-select-template";
+    private static final String THIRD_WIZARD_STEP_CONFIGURE_TEMPLATE = "wizard-step-configure-template";
+    private static final String WIZARD_STEP_CONFIGURE_MODULES = "wizard-step-configure-modules";
+    private static final String WIZARD_STEP_REVIEW = "wizard-step-review";
+
+    private static final String REDIRECT_WIZARD_STEP_SELECT_PLATFORM = "redirect:/wizard/step/select-platform";
+    private static final String REDIRECT_WIZARD_STEP_CONFIGURE_TEMPLATE = "redirect:/wizard/step/configure-template";
+    private static final String REDIRECT_WIZARD_STEP_CONFIGURE_MODULES = "redirect:/wizard/step/configure-modules";
+    private static final String REDIRECT_WIZARD_STEP_REVIEW = "redirect:/wizard/step/review";
 
     private final ProjectRequestFactory projectRequestFactory;
     private final TemplateService templateService;
     private final InitializerController initializerController;
 
+    @GetMapping("/step/select-platform")
+    public String showStepSelectPlatform(Model model) {
+        preparePlatformSelectionModel(model);
+        return FIRST_WIZARD_STEP_SELECT_PLATFORM;
+    }
+
+    private void preparePlatformSelectionModel(Model model) {
+        List<Platform> platforms = templateService.getPlatforms();
+        model.addAttribute(PLATFORM_LIST, platforms);
+        if (!model.containsAttribute(PLATFORM_SELECTION_MODEL)) {
+            model.addAttribute(PLATFORM_SELECTION_MODEL, new PlatformSelectionModel());
+        }
+    }
+
+    @PostMapping("/step/select-platform")
+    public String processStepSelectApp(@Valid @ModelAttribute(PLATFORM_SELECTION_MODEL) PlatformSelectionModel platformSelectionModel,
+                                       BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return showStepSelectPlatform(model);
+        }
+
+        redirectAttributes.addAttribute(PLATFORM_SELECTION_MODEL, platformSelectionModel);
+        redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, prepareTemplateSelectionModelForRendering(model, platformSelectionModel.getSelectedPlatformId()));
+        return SECOND_WIZARD_STEP_SELECT_TEMPLATE;
+    }
+
     @GetMapping("/step/select-template")
-    public String showStepSelectTemplate(Model model) {
-        prepareSelectionModelForRendering(model);
-        return "wizard-step-select-template";
+    public String showStepSelectTemplate(Model model, @ModelAttribute(PLATFORM_SELECTION_MODEL) PlatformSelectionModel platformSelectionModel,
+                                         RedirectAttributes redirectAttributes) {
+        var templateSelectionModel = prepareTemplateSelectionModelForRendering(model, platformSelectionModel.getSelectedPlatformId());
+        redirectAttributes.addAttribute(PLATFORM_SELECTION_MODEL, platformSelectionModel);
+        redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
+        return SECOND_WIZARD_STEP_SELECT_TEMPLATE;
+    }
+
+    private TemplateSelectionModel prepareTemplateSelectionModelForRendering(Model model, String selectedPlatformKey) {
+        List<ProjectTemplateDTO> projectTemplateDTOs = templateService.getProjectTemplatesForPlatform(selectedPlatformKey).stream()
+                .map(ProjectTemplateDTO::from).toList();
+        model.addAttribute(TEMPLATE_LIST, projectTemplateDTOs);
+
+        if (!model.containsAttribute(TEMPLATE_SELECTION_MODEL)) {
+            TemplateSelectionModel templateSelectionModel = new TemplateSelectionModel();
+            model.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
+            return templateSelectionModel;
+        } else {
+            return (TemplateSelectionModel) model.getAttribute(TEMPLATE_SELECTION_MODEL);
+        }
     }
 
     @PostMapping("/step/select-template")
-    public String processStepSelectTemplate(@Valid @ModelAttribute(TEMPLATE_SELECTION_MODEL) TemplateSelectionModel templateSelectionModel,
+    public String processStepSelectTemplate(@Valid @ModelAttribute(PLATFORM_SELECTION_MODEL) PlatformSelectionModel platformSelectionModel,
+                                            @Valid @ModelAttribute(TEMPLATE_SELECTION_MODEL) TemplateSelectionModel templateSelectionModel,
                                             BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            prepareSelectionModelForRendering(model);
-            return "wizard-step-select-template";
+            return showStepSelectTemplate(model, platformSelectionModel, redirectAttributes);
         }
-        redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
-        return "redirect:/wizard/step/configure-template";
-    }
 
-    private void prepareSelectionModelForRendering(Model model) {
-        model.addAttribute(TEMPLATE_LIST, templateService.getProjectTemplates().stream()
-                .map(ProjectTemplateDTO::from).toList());
-        if (!model.containsAttribute(TEMPLATE_SELECTION_MODEL)) {
-            model.addAttribute(TEMPLATE_SELECTION_MODEL, new TemplateSelectionModel());
-        }
+        redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
+        return REDIRECT_WIZARD_STEP_CONFIGURE_TEMPLATE;
     }
 
     @GetMapping("/step/configure-template")
@@ -72,7 +125,7 @@ public class WizardController {
 
         prepareTemplateConfigurationModelForRendering(model, templateSelectionModel);
 
-        return "wizard-step-configure-template";
+        return THIRD_WIZARD_STEP_CONFIGURE_TEMPLATE;
     }
 
     @PostMapping("/step/configure-template")
@@ -85,13 +138,12 @@ public class WizardController {
                 templateConfigurationModel.getTemplateParameterValues().put(templateParameter.getId(), request.getParameter(templateParameter.getId())));
 
         if (bindingResult.hasErrors()) {
-            prepareTemplateConfigurationModelForRendering(model, templateSelectionModel);
-            return "wizard-step-configure-template";
+            return showStepConfigureTemplate(templateSelectionModel, model);
         }
 
         redirectAttributes.addAttribute(TEMPLATE_CONFIGURATION_MODEL, templateConfigurationModel);
         redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
-        return "redirect:/wizard/step/configure-modules";
+        return REDIRECT_WIZARD_STEP_CONFIGURE_MODULES;
     }
 
     private void prepareTemplateConfigurationModelForRendering(Model model, TemplateSelectionModel templateSelectionModel) {
@@ -116,7 +168,7 @@ public class WizardController {
             redirectAttributes.addAttribute(TEMPLATE_CONFIGURATION_MODEL, templateConfigurationModel);
             redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
             redirectAttributes.addAttribute(MODULE_CONFIGURATION_MODEL, new ModuleConfigurationModel());
-            return "redirect:/wizard/step/review";
+            return REDIRECT_WIZARD_STEP_REVIEW;
         }
 
         prepareModuleConfigurationModelForRendering(model, moduleParameters);
@@ -124,7 +176,7 @@ public class WizardController {
         model.addAttribute(TEMPLATE_CONFIGURATION_MODEL, templateConfigurationModel);
         model.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
 
-        return "wizard-step-configure-modules";
+        return WIZARD_STEP_CONFIGURE_MODULES;
     }
 
     @PostMapping("/step/configure-modules")
@@ -140,15 +192,14 @@ public class WizardController {
                 moduleConfigurationModel.getModuleParameterValues().put(moduleParameter.getId(), request.getParameter(moduleParameter.getId())));
 
         if (bindingResult.hasErrors()) {
-            prepareModuleConfigurationModelForRendering(model, moduleParameters);
-            return "wizard-step-configure-modules";
+            return showStepConfigureModules(templateSelectionModel, templateConfigurationModel, model, redirectAttributes);
         }
 
         redirectAttributes.addAttribute(TEMPLATE_CONFIGURATION_MODEL, templateConfigurationModel);
         redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
         redirectAttributes.addAttribute(MODULE_CONFIGURATION_MODEL, moduleConfigurationModel);
 
-        return "redirect:/wizard/step/review";
+        return REDIRECT_WIZARD_STEP_REVIEW;
     }
 
     private static void prepareModuleConfigurationModelForRendering(Model model, List<TemplateParameter> moduleParameters) {
@@ -163,7 +214,7 @@ public class WizardController {
         model.addAttribute(TEMPLATE_CONFIGURATION_MODEL, templateConfigurationModel);
         model.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
         model.addAttribute(MODULE_CONFIGURATION_MODEL, moduleConfigurationModel);
-        return "wizard-step-review";
+        return WIZARD_STEP_REVIEW;
     }
 
     @PostMapping("/step/generate")
@@ -177,6 +228,6 @@ public class WizardController {
 
     @PostMapping("/reset")
     public String reset() {
-        return "redirect:/wizard/step/select-template";
+        return REDIRECT_WIZARD_STEP_SELECT_PLATFORM;
     }
 }

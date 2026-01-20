@@ -42,7 +42,8 @@ public class DefaultGitService implements GitService {
 
     @Override
     public String getFileContentFromRepository(GitRepositoryConfiguration configuration, String filePath) throws IOException {
-        log.info("Getting file {} from repository {}", filePath, configuration.getUrl());
+        String repositoryUrl = configuration.getUrl();
+        log.info("Getting file {} from the repository {}", filePath, repositoryUrl);
         Path localPath = Files.createTempDirectory("jeap-initializer");
         try {
             CloneCommand cloneCommand = createCloneCommand(configuration, localPath);
@@ -61,7 +62,7 @@ public class DefaultGitService implements GitService {
                         treeWalk.setRecursive(true);
                         treeWalk.setFilter(org.eclipse.jgit.treewalk.filter.PathFilter.create(filePath));
                         if (!treeWalk.next()) {
-                            throw GitException.fileRetrievalFailed("File %s not found in repository %s".formatted(filePath, configuration.getUrl()));
+                            throw GitException.fileRetrievalFailed("File %s not found in the repository %s".formatted(filePath, repositoryUrl));
                         }
                         ObjectId objectId = treeWalk.getObjectId(0);
                         ObjectLoader loader = repository.open(objectId);
@@ -70,6 +71,7 @@ public class DefaultGitService implements GitService {
                 }
             }
         } catch (Exception e) {
+            log.error("Error has occurred while getting content from the file {}. Please verify the repository URL: {}.", filePath, repositoryUrl);
             throw GitException.cloneFailed(e);
         } finally {
             FileSystemUtils.deleteRecursively(localPath);

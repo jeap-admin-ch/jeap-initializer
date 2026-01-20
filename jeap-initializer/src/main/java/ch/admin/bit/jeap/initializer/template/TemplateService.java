@@ -1,18 +1,21 @@
 package ch.admin.bit.jeap.initializer.template;
 
 import ch.admin.bit.jeap.initializer.config.TemplateNotFoundException;
+import ch.admin.bit.jeap.initializer.model.Platform;
 import ch.admin.bit.jeap.initializer.model.ProjectTemplate;
 import ch.admin.bit.jeap.initializer.model.TemplateModule;
 import ch.admin.bit.jeap.initializer.model.TemplateParameter;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
-@Component
+@Service
+@Slf4j
 public class TemplateService {
 
     private final TemplateRepository templateRepository;
@@ -26,7 +29,18 @@ public class TemplateService {
         throw new TemplateNotFoundException(templateKey);
     }
 
-    public List<ProjectTemplate> getProjectTemplates() {
+    public List<Platform> getPlatforms() {
+        return templateRepository.getTemplateKeys()
+                .stream()
+                .parallel()
+                .map(templateRepository::getTemplate)
+                .map(ProjectTemplate::getPlatform)
+                .map(templateRepository::getConfiguredPlatform)
+                .sorted(Comparator.comparing(Platform::name))
+                .toList();
+    }
+
+    public List<ProjectTemplate> getAllProjectTemplates() {
         return templateRepository.getTemplateKeys()
                 .stream()
                 .parallel()
@@ -35,8 +49,18 @@ public class TemplateService {
                 .toList();
     }
 
-    public List<TemplateParameter> getTemplateParameters(String selectedTemplateId) {
-        return getTemplate(selectedTemplateId).getTemplateParameters();
+    public List<ProjectTemplate> getProjectTemplatesForPlatform(String platformKey) {
+        return templateRepository.getTemplateKeys()
+                .stream()
+                .parallel()
+                .map(templateRepository::getTemplate)
+                .filter(template -> platformKey.equals(template.getPlatform()))
+                .sorted(Comparator.comparing(ProjectTemplate::getName))
+                .toList();
+    }
+
+    public List<TemplateParameter> getTemplateParameters(String templateId) {
+        return getTemplate(templateId).getTemplateParameters();
     }
 
     public List<TemplateParameter> getModuleParameters(String selectedTemplateId, Set<String> selectedModuleIds) {

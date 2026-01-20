@@ -67,7 +67,7 @@ public class InitializerController {
 
     @GetMapping("/templates")
     public List<ProjectTemplateDTO> getProjectTemplates() {
-        return templateService.getProjectTemplates().stream()
+        return templateService.getAllProjectTemplates().stream()
                 .map(ProjectTemplateDTO::from)
                 .toList();
     }

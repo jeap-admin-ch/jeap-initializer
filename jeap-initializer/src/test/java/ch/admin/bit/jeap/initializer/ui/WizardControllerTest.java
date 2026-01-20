@@ -9,10 +9,10 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.servlet.resource.ResourceUrlProvider;
@@ -34,9 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class WizardControllerTest {
 
-    @MockBean
+    @MockitoBean
     private ProjectGenerator projectGenerator;
-    @MockBean
+    @MockitoBean
     private CacheManager cacheManager;
     @Captor
     private ArgumentCaptor<ProjectRequest> projectRequestCaptor;
@@ -47,17 +47,24 @@ class WizardControllerTest {
 
     @Test
     void wizardForm() throws Exception {
-        // Step 1: Select Template
-        mockMvc.perform(get("/wizard/step/select-template"))
+        // Step 1: Select Platform
+        mockMvc.perform(get("/wizard/step/select-platform"))
                 .andExpect(status().isOk());
 
+        mockMvc.perform(post("/wizard/step/select-platform")
+                        .param("selectedPlatformId", "test-platform"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        // Step 2: Select Template
         MvcResult selectTemplateResult = mockMvc.perform(post("/wizard/step/select-template")
+                        .param("selectedPlatformId", "test-platform")
                         .param("selectedTemplateId", "test-template"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/wizard/step/configure-template?*"))
                 .andReturn();
 
-        // Step 2: Configure Template
+        // Step 3: Configure Template
         String redirectedUrl = getRedirectedUrl(selectTemplateResult);
         String tsm = getModuleAttribute(selectTemplateResult, "templateSelectionModel");
         mockMvc.perform(get(redirectedUrl))
@@ -71,7 +78,7 @@ class WizardControllerTest {
                 .andExpect(redirectedUrlPattern("/wizard/step/configure-modules?*"))
                 .andReturn();
 
-        // Step 3: Configure Modules
+        // Step 4: Configure Modules
         String redirectedUrl3 = getRedirectedUrl(configureResult);
         String tcm = getModuleAttribute(configureResult, "templateConfigurationModel");
         mockMvc.perform(get(redirectedUrl3))
@@ -85,13 +92,13 @@ class WizardControllerTest {
                 .andExpect(redirectedUrlPattern("/wizard/step/review?*"))
                 .andReturn();
 
-        // Step 4: Review selection
+        // Step 5: Review selection
         String redirectedUrl4 = getRedirectedUrl(moduleConfigResult);
         String mcm = getModuleAttribute(moduleConfigResult, "moduleConfigurationModel");
         mockMvc.perform(get(redirectedUrl4))
                 .andExpect(status().isOk());
 
-        // Step 5: Generate project
+        // Step 6: Generate project
         mockMvc.perform(post("/wizard/step/generate")
                         .param("templateSelectionModel", tsm)
                         .param("templateConfigurationModel", tcm)
@@ -123,17 +130,23 @@ class WizardControllerTest {
 
     @Test
     void wizardForm_whenOptionalModuleIsNotSelected_thenShouldSkipModuleConfigurationStep() throws Exception {
-        // Step 1: Select Template
-        mockMvc.perform(get("/wizard/step/select-template"))
+        // Step 1: Select Platform
+        mockMvc.perform(get("/wizard/step/select-platform"))
                 .andExpect(status().isOk());
 
+        mockMvc.perform(post("/wizard/step/select-platform")
+                        .param("selectedPlatformId", "test-platform"))
+                .andExpect(status().isOk());
+
+        // Step 2: Select Template
         MvcResult selectTemplateResult = mockMvc.perform(post("/wizard/step/select-template")
+                        .param("selectedPlatformId", "test-platform")
                         .param("selectedTemplateId", "test-template"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("/wizard/step/configure-template?*"))
                 .andReturn();
 
-        // Step 2: Configure Template
+        // Step 3: Configure Template
         String redirectedUrl = getRedirectedUrl(selectTemplateResult);
         String tsm = getModuleAttribute(selectTemplateResult, "templateSelectionModel");
         mockMvc.perform(get(redirectedUrl))
@@ -146,7 +159,7 @@ class WizardControllerTest {
                 .andExpect(redirectedUrlPattern("/wizard/step/configure-modules?*"))
                 .andReturn();
 
-        // Step 3: Configure Modules
+        // Step 4: Configure Modules
         String redirectedUrl3 = getRedirectedUrl(configureResult);
         String tcm = getModuleAttribute(configureResult, "templateConfigurationModel");
         MvcResult moduleResult = mockMvc.perform(get(redirectedUrl3))
@@ -154,13 +167,13 @@ class WizardControllerTest {
                 .andExpect(redirectedUrlPattern("/wizard/step/review?*"))
                 .andReturn();
 
-        // Step 4: Review selection
+        // Step 5: Review selection
         String redirectedUrl4 = getRedirectedUrl(moduleResult);
         String mcm = getModuleAttribute(moduleResult, "moduleConfigurationModel");
         mockMvc.perform(get(redirectedUrl4))
                 .andExpect(status().isOk());
 
-        // Step 5: Generate project
+        // Step 6: Generate project
         mockMvc.perform(post("/wizard/step/generate")
                         .param("templateSelectionModel", tsm)
                         .param("templateConfigurationModel", tcm)
@@ -176,5 +189,40 @@ class WizardControllerTest {
                 .containsEntry("awsAccountId", "123456789012");
         assertThat(projectRequest.getSelectedModuleIds())
                 .isEmpty();
+    }
+
+    @Test
+    void processStepSelectApp_proceedsToTemplateSelectionView() throws Exception {
+        mockMvc.perform(post("/wizard/step/select-platform")
+                        .param("selectedPlatformId", "test-platform"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void processStepSelectApp_populatesTemplateListForSelectedPlatform() throws Exception {
+        MvcResult result = mockMvc.perform(post("/wizard/step/select-platform")
+                        .param("selectedPlatformId", "test-platform"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        var templateList = (java.util.List<ch.admin.bit.jeap.initializer.api.model.ProjectTemplateDTO>)
+                result.getModelAndView().getModel().get("templateList");
+        assertThat(templateList).isNotEmpty()
+                .hasSize(2);
+        assertThat(templateList.getFirst().key()).isEqualTo("test-template");
+    }
+
+    @Test
+    void showStepSelectPlatform_returnsOk() throws Exception {
+        mockMvc.perform(get("/wizard/step/select-platform"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void reset_redirectsToSelectPlatform() throws Exception {
+        mockMvc.perform(post("/wizard/reset"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/wizard/step/select-platform*"));
     }
 }

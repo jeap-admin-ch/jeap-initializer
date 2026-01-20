@@ -1,6 +1,7 @@
 package ch.admin.bit.jeap.initializer.git;
 
 import ch.admin.bit.jeap.initializer.model.GitRepositoryConfiguration;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Slf4j
 class DefaultGitServiceTest {
 
     DefaultGitService defaultGitService = new DefaultGitService();
@@ -28,6 +30,10 @@ class DefaultGitServiceTest {
     @BeforeAll
     static void setUp() throws Exception {
         File repoDir = new File("target/test-git-service");
+        // Clean up the directory if it exists to avoid RefAlreadyExistsException
+        if (repoDir.exists()) {
+            FileUtils.deleteDirectory(repoDir);
+        }
         FileUtils.copyDirectory(new File("src/test/resources/test-git-service"), repoDir);
         Git newRepo = Git.init()
                 .setDirectory(repoDir)
@@ -66,7 +72,7 @@ class DefaultGitServiceTest {
     }
 
     @Test
-    void checkoutRepository() throws IOException {
+    void checkoutRepository() {
         GitRepositoryConfiguration gitRepositoryConfiguration = new GitRepositoryConfiguration();
         gitRepositoryConfiguration.setUrl(repoUrl);
         gitRepositoryConfiguration.setReference("master");
@@ -89,8 +95,9 @@ class DefaultGitServiceTest {
     void getFileContentFromRepository() throws IOException {
         GitRepositoryConfiguration gitRepositoryConfiguration = new GitRepositoryConfiguration();
         gitRepositoryConfiguration.setUrl(repoUrl);
-        assertThat(defaultGitService.getFileContentFromRepository(gitRepositoryConfiguration, "README.md"))
-                .contains("Getting Started");
+        String fileContentFromRepository = defaultGitService.getFileContentFromRepository(gitRepositoryConfiguration, "README.md");
+        log.info(fileContentFromRepository);
+        assertThat(fileContentFromRepository).contains("Getting Started");
     }
 
     @Test

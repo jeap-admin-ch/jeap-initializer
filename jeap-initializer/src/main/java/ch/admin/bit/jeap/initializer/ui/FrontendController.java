@@ -10,6 +10,6 @@ public class FrontendController {
 
     @GetMapping
     public String redirectIndex() {
-        return "redirect:/wizard/step/select-template";
+        return "redirect:/wizard/step/select-platform";
     }
 }

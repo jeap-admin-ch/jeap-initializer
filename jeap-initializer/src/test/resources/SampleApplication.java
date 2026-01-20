@@ -8,7 +8,7 @@ import ch.admin.bit.jme.something;
 
 @SpringBootApplication
 @Slf4j
-public class Application {
+class Application {
     public static void main(String[] args) {
     }
 

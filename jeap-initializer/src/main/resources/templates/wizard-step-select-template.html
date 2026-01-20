@@ -15,6 +15,9 @@
 
     <div th:replace="~{fragments :: errorList}"></div>
 
+    <input type="hidden" th:name="platformSelectionModel"
+           th:value="${#conversions.convert(platformSelectionModel, 'java.lang.String')}"/>
+
     <div th:each="template : ${templateList}" class="template-option">
         <label th:for="'template_' + ${template.key}">
             <input th:id="'template_' + ${template.key}" type="radio" th:field="*{selectedTemplateId}"

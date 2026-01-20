@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>jEAP Initializer - Select Template</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}"/>
+</head>
+
+<body>
+
+<h1>Select Platform</h1>
+<form th:action="@{/wizard/step/select-platform}" th:object="${platformSelectionModel}" method="post"
+      autocomplete="off">
+    <p>Choose your Platform:</p>
+
+    <div th:replace="~{fragments :: errorList}"></div>
+
+    <div th:each="platform : ${platformList}" class="platform-option">
+        <label th:for="'platform_' + ${platform.key}">
+            <input th:id="'platform_' + ${platform.key}" type="radio" th:field="*{selectedPlatformId}"
+                   th:value="${platform.key()}"/>
+            <div class="radio-label">
+                <strong th:text="${platform.name}"></strong>
+                <span class="description" th:text="${platform.description}"></span>
+            </div>
+        </label>
+    </div>
+
+    <div th:replace="~{fragments :: formButtons}"></div>
+</form>
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+
+</html>

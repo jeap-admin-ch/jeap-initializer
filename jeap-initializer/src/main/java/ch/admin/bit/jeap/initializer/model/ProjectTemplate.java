@@ -20,6 +20,7 @@ public class ProjectTemplate {
     private String artifactId;
     private String groupId;
     private String systemName;
+    private String platform;
     private String department = "BIT";
 
     private List<TemplateParameter> templateParameters = new ArrayList<>();
