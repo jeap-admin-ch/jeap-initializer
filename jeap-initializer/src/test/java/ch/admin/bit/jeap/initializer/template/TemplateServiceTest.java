@@ -56,14 +56,17 @@ class TemplateServiceTest {
     void getProjectPlatforms_returnsSortedByName() {
         ProjectTemplate a = projectTemplate("tplA", "Template A", PLATFORM_1, "https://host/scm/app/repoA.git");
         ProjectTemplate b = projectTemplate("tplB", "Template B", PLATFORM_2, "https://host/scm/app/repoB.git");
-        when(templateRepository.getTemplateKeys()).thenReturn(Set.of("tplB", "tplA"));
+        ProjectTemplate c = projectTemplate("tplC", "Template C", PLATFORM_2, "https://host/scm/app/repoC.git");
+        when(templateRepository.getTemplateKeys()).thenReturn(Set.of("tplB", "tplA", "tplC"));
         when(templateRepository.getTemplate("tplA")).thenReturn(a);
         when(templateRepository.getTemplate("tplB")).thenReturn(b);
+        when(templateRepository.getTemplate("tplC")).thenReturn(c);
         when(templateRepository.getConfiguredPlatform(PLATFORM_1)).thenReturn(PLATFORM_INSTANCE_1);
         when(templateRepository.getConfiguredPlatform(PLATFORM_2)).thenReturn(PLATFORM_INSTANCE_2);
 
         List<Platform> result = service.getPlatforms();
-        assertThat(result).extracting(Platform::name).containsExactly(PLATFORM_NAME_ALPHA, PLATFORM_NAME_BETA);
+        assertThat(result).extracting(Platform::name)
+                .containsExactly(PLATFORM_NAME_ALPHA, PLATFORM_NAME_BETA);
     }
 
     @Test

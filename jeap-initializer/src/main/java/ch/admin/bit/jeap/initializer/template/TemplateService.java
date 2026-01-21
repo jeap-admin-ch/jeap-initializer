@@ -36,6 +36,7 @@ public class TemplateService {
                 .map(templateRepository::getTemplate)
                 .map(ProjectTemplate::getPlatform)
                 .map(templateRepository::getConfiguredPlatform)
+                .distinct()
                 .sorted(Comparator.comparing(Platform::name))
                 .toList();
     }
