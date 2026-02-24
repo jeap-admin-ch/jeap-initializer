@@ -220,6 +220,34 @@ class WizardControllerTest {
     }
 
     @Test
+    void showStepSelectTemplate_withoutPriorState_redirectsToSelectPlatform() throws Exception {
+        mockMvc.perform(get("/wizard/step/select-template"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/wizard/step/select-platform*"));
+    }
+
+    @Test
+    void showStepConfigureTemplate_withoutPriorState_redirectsToSelectPlatform() throws Exception {
+        mockMvc.perform(get("/wizard/step/configure-template"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/wizard/step/select-platform*"));
+    }
+
+    @Test
+    void showStepConfigureModules_withoutPriorState_redirectsToSelectPlatform() throws Exception {
+        mockMvc.perform(get("/wizard/step/configure-modules"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/wizard/step/select-platform*"));
+    }
+
+    @Test
+    void review_withoutPriorState_redirectsToSelectPlatform() throws Exception {
+        mockMvc.perform(get("/wizard/step/review"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("/wizard/step/select-platform*"));
+    }
+
+    @Test
     void reset_redirectsToSelectPlatform() throws Exception {
         mockMvc.perform(post("/wizard/reset"))
                 .andExpect(status().is3xxRedirection())

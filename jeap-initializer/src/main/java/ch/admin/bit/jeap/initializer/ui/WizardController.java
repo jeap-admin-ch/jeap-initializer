@@ -18,6 +18,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -86,6 +87,9 @@ public class WizardController {
     @GetMapping("/step/select-template")
     public String showStepSelectTemplate(Model model, @ModelAttribute(PLATFORM_SELECTION_MODEL) PlatformSelectionModel platformSelectionModel,
                                          RedirectAttributes redirectAttributes) {
+        if (!StringUtils.hasText(platformSelectionModel.getSelectedPlatformId())) {
+            return REDIRECT_WIZARD_STEP_SELECT_PLATFORM;
+        }
         var templateSelectionModel = prepareTemplateSelectionModelForRendering(model, platformSelectionModel.getSelectedPlatformId());
         redirectAttributes.addAttribute(PLATFORM_SELECTION_MODEL, platformSelectionModel);
         redirectAttributes.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
@@ -121,6 +125,9 @@ public class WizardController {
     @GetMapping("/step/configure-template")
     public String showStepConfigureTemplate(@ModelAttribute(TEMPLATE_SELECTION_MODEL) TemplateSelectionModel templateSelectionModel,
                                             Model model) {
+        if (!StringUtils.hasText(templateSelectionModel.getSelectedTemplateId())) {
+            return REDIRECT_WIZARD_STEP_SELECT_PLATFORM;
+        }
         model.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
 
         prepareTemplateConfigurationModelForRendering(model, templateSelectionModel);
@@ -157,9 +164,12 @@ public class WizardController {
     }
 
     @GetMapping("/step/configure-modules")
-    public String showStepConfigureModules(@RequestParam(TEMPLATE_SELECTION_MODEL) TemplateSelectionModel templateSelectionModel,
-                                           @RequestParam(TEMPLATE_CONFIGURATION_MODEL) TemplateConfigurationModel templateConfigurationModel,
+    public String showStepConfigureModules(@RequestParam(name = TEMPLATE_SELECTION_MODEL, required = false) TemplateSelectionModel templateSelectionModel,
+                                           @RequestParam(name = TEMPLATE_CONFIGURATION_MODEL, required = false) TemplateConfigurationModel templateConfigurationModel,
                                            Model model, RedirectAttributes redirectAttributes) {
+        if (templateSelectionModel == null || templateConfigurationModel == null) {
+            return REDIRECT_WIZARD_STEP_SELECT_PLATFORM;
+        }
 
         var moduleParameters = templateService.getModuleParameters(
                 templateSelectionModel.getSelectedTemplateId(), templateConfigurationModel.getSelectedModuleIds());
@@ -207,10 +217,13 @@ public class WizardController {
     }
 
     @GetMapping("/step/review")
-    public String review(@RequestParam(TEMPLATE_SELECTION_MODEL) TemplateSelectionModel templateSelectionModel,
-                         @RequestParam(TEMPLATE_CONFIGURATION_MODEL) TemplateConfigurationModel templateConfigurationModel,
-                         @RequestParam(MODULE_CONFIGURATION_MODEL) ModuleConfigurationModel moduleConfigurationModel,
+    public String review(@RequestParam(name = TEMPLATE_SELECTION_MODEL, required = false) TemplateSelectionModel templateSelectionModel,
+                         @RequestParam(name = TEMPLATE_CONFIGURATION_MODEL, required = false) TemplateConfigurationModel templateConfigurationModel,
+                         @RequestParam(name = MODULE_CONFIGURATION_MODEL, required = false) ModuleConfigurationModel moduleConfigurationModel,
                          Model model) {
+        if (templateSelectionModel == null || templateConfigurationModel == null || moduleConfigurationModel == null) {
+            return REDIRECT_WIZARD_STEP_SELECT_PLATFORM;
+        }
         model.addAttribute(TEMPLATE_CONFIGURATION_MODEL, templateConfigurationModel);
         model.addAttribute(TEMPLATE_SELECTION_MODEL, templateSelectionModel);
         model.addAttribute(MODULE_CONFIGURATION_MODEL, moduleConfigurationModel);
