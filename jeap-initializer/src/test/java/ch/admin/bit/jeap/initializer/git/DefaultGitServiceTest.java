@@ -1,6 +1,7 @@
 package ch.admin.bit.jeap.initializer.git;
 
 import ch.admin.bit.jeap.initializer.model.GitRepositoryConfiguration;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -28,7 +30,8 @@ class DefaultGitServiceTest {
     private static String repoUrl;
 
     @BeforeAll
-    static void setUp() throws Exception {
+    @SneakyThrows
+    static void setUp() {
         File repoDir = new File("target/test-git-service");
         // Clean up the directory if it exists to avoid RefAlreadyExistsException
         if (repoDir.exists()) {
@@ -54,7 +57,7 @@ class DefaultGitServiceTest {
                 .setName("feature/branch-for-tests")
                 .call();
         File readmeFile = new File(repoDir, "README.md");
-        FileUtils.writeStringToFile(readmeFile, "This file is part of a branch", "UTF-8");
+        FileUtils.writeStringToFile(readmeFile, "This file is part of a branch", StandardCharsets.UTF_8);
         newRepo.add()
                 .addFilepattern("README.md")
                 .call();

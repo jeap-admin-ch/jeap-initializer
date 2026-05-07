@@ -22,15 +22,14 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class InitializerControllerTest {
 
-    public static final ParameterizedTypeReference<List<ProjectTemplateDTO>> LIST_PROJECTTEMPLATEDTO_TYPE_REF = new ParameterizedTypeReference<>() {
-    };
+    public static final ParameterizedTypeReference<List<ProjectTemplateDTO>> LIST_PROJECT_TEMPLATE_DTO_TYPE_REF = new ParameterizedTypeReference<>() {};
 
     @LocalServerPort
     private int randomServerPort;
@@ -47,9 +46,9 @@ class InitializerControllerTest {
                 .toEntity(byte[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getHeaders().containsKey("content-type")).isTrue();
-        assertThat(response.getHeaders().get("Content-Type").get(0)).isEqualTo("application/octet-stream");
-        assertThat(response.getHeaders().get("Content-Disposition").get(0)).containsPattern("attachment; filename=\"jEAP Project(\\d{4}-\\d{2}-\\d{2}-\\d{6}).tar.gz\"");
+        assertThat(response.getHeaders().containsHeader("content-type")).isTrue();
+        assertThat(requireNonNull(response.getHeaders().get("Content-Type")).getFirst()).isEqualTo("application/octet-stream");
+        assertThat(requireNonNull(response.getHeaders().get("Content-Disposition")).getFirst()).containsPattern("attachment; filename=\"jEAP Project(\\d{4}-\\d{2}-\\d{2}-\\d{6}).tar.gz\"");
 
         extractGzipResponse(response, extractedDirectory);
 
@@ -67,9 +66,9 @@ class InitializerControllerTest {
                 .toEntity(byte[].class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getHeaders().containsKey("content-type")).isTrue();
-        assertThat(response.getHeaders().get("Content-Type").get(0)).isEqualTo("application/octet-stream");
-        assertThat(response.getHeaders().get("Content-Disposition").get(0)).containsPattern("attachment; filename=\"myApp(\\d{4}-\\d{2}-\\d{2}-\\d{6}).tar.gz\"");
+        assertThat(response.getHeaders().containsHeader("content-type")).isTrue();
+        assertThat(requireNonNull(response.getHeaders().get("Content-Type")).getFirst()).isEqualTo("application/octet-stream");
+        assertThat(requireNonNull(response.getHeaders().get("Content-Disposition")).getFirst()).containsPattern("attachment; filename=\"myApp(\\d{4}-\\d{2}-\\d{2}-\\d{6}).tar.gz\"");
 
         extractGzipResponse(response, extractedDirectory);
 
@@ -112,14 +111,14 @@ class InitializerControllerTest {
         ResponseEntity<List<ProjectTemplateDTO>> getTemplatesResponse = restClient.get()
                 .uri("http://localhost:" + randomServerPort + "/api/templates")
                 .retrieve()
-                .toEntity(LIST_PROJECTTEMPLATEDTO_TYPE_REF);
+                .toEntity(LIST_PROJECT_TEMPLATE_DTO_TYPE_REF);
         List<ProjectTemplateDTO> templates = getTemplatesResponse.getBody();
-        assertThat(templates.size()).isEqualTo(2);
-        ProjectTemplateDTO template = templates.get(0);
+        assertThat(templates).hasSize(2);
+        ProjectTemplateDTO template = templates.getFirst();
         assertThat(template.key()).isEqualTo("jeap-scs");
         assertThat(template.name()).isEqualTo("a My template");
         assertThat(template.description()).isEqualTo("Some description");
-        assertThat(template.templateParameters().size()).isEqualTo(2);
+        assertThat(template.templateParameters()).hasSize(2);
         assertThat(template.templateParameters().getFirst().getId()).isEqualTo("templateParameter1");
         assertThat(template.templateParameters().getFirst().getName()).isEqualTo("Template Parameter 1");
         assertThat(template.templateParameters().getFirst().getDescription()).isEqualTo("Description of templateParameter1");
@@ -131,7 +130,7 @@ class InitializerControllerTest {
         assertThat(template.key()).isEqualTo("gitops-template");
         assertThat(template.name()).isEqualTo("b My template");
         assertThat(template.description()).isEqualTo("Some description");
-        assertThat(template.templateParameters().size()).isEqualTo(2);
+        assertThat(template.templateParameters()).hasSize(2);
         assertThat(template.templateParameters().getFirst().getId()).isEqualTo("templateParameter1");
         assertThat(template.templateParameters().getFirst().getName()).isEqualTo("Template Parameter 1");
         assertThat(template.templateParameters().getFirst().getDescription()).isEqualTo("Description of templateParameter1");

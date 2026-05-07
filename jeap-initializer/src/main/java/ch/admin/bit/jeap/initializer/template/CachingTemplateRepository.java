@@ -7,7 +7,7 @@ import ch.admin.bit.jeap.initializer.config.ProjectTemplateProperties;
 import ch.admin.bit.jeap.initializer.git.GitService;
 import ch.admin.bit.jeap.initializer.model.Platform;
 import ch.admin.bit.jeap.initializer.model.ProjectTemplate;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AllArgsConstructor;
@@ -33,8 +33,9 @@ class CachingTemplateRepository implements TemplateRepository {
 
     private final JeapInitializerProperties initializerProperties;
     private final GitService gitService;
-    private final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory())
-            .setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE);
+    private final JsonMapper jsonMapper = JsonMapper.builder(new YAMLFactory())
+            .propertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE)
+            .build();
 
     public Set<String> getTemplateKeys() {
         return Set.copyOf(initializerProperties.getTemplates().keySet());
@@ -81,7 +82,7 @@ class CachingTemplateRepository implements TemplateRepository {
     private ProjectTemplate loadTemplateContent(ProjectTemplateProperties templateProperties) {
         try {
             String content = gitService.getFileContentFromRepository(templateProperties.getRepositoryConfiguration(), "initializer.yaml");
-            return objectMapper.readValue(content, ProjectTemplate.class);
+            return jsonMapper.readValue(content, ProjectTemplate.class);
         } catch (IOException cause) {
             throw TemplateException.templateLoadingFailed(cause);
         }

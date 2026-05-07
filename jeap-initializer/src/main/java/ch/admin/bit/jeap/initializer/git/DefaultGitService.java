@@ -33,7 +33,7 @@ public class DefaultGitService implements GitService {
 
         CloneCommand cloneCommand = createCloneCommand(configuration, localPath);
 
-        try (Git ignored = cloneCommand.call()) {
+        try (var _ = cloneCommand.call()) {
             FileSystemUtils.deleteRecursively(Path.of(localPath + File.separator + ".git"));
         } catch (GitAPIException | IOException e) {
             throw GitException.cloneFailed(e);

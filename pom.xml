@@ -27,31 +27,30 @@
     <parent>
         <groupId>ch.admin.bit.jeap</groupId>
         <artifactId>jeap-spring-boot-parent</artifactId>
-        <version>33.3.0</version>
+        <version>34.7.0-alpha-springboot4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <properties>
-        <java.version>21</java.version>
+        <commons-compress.version>1.28.0</commons-compress.version>
         <maven.javadoc.skip>false</maven.javadoc.skip>
     </properties>
 
     <artifactId>jeap-initializer-parent</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>2.55.0-SNAPSHOT</version>
+    <version>3.0.0-alpha-springboot4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>jeap-initializer</module>
     </modules>
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>ch.admin.bit.jeap</groupId>
                 <artifactId>jeap-initializer</artifactId>
-                <version>2.55.0-SNAPSHOT</version>
+                <version>3.0.0-alpha-springboot4-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

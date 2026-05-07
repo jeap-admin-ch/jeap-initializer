@@ -7,11 +7,13 @@ import ch.admin.bit.jeap.initializer.template.TemplateService;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.util.List;
 import java.util.Set;
 
 @TestConfiguration
+@EnableWebSecurity
 @Import({ProjectRequestFactory.class, ModelConversionConfig.class, WebSecurityConfig.class})
 class WizardControllerTestConfig {
     @Bean

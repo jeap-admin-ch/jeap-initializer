@@ -2,12 +2,14 @@ package ch.admin.bit.jeap.initializer;
 
 import ch.admin.bit.jeap.initializer.model.ProjectRequest;
 import ch.admin.bit.jeap.initializer.model.ProjectTemplate;
+import lombok.experimental.UtilityClass;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@UtilityClass
 public class TestUtils {
 
     public static void writeToFile(Path srcDirectory, String fileName, String content) throws IOException {

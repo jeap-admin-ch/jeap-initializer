@@ -100,7 +100,7 @@ public class FolderRenamerContributor implements ProjectContributor {
     private static void moveAtomicWithFallback(Path from, Path to) throws IOException {
         try {
             Files.move(from, to, StandardCopyOption.ATOMIC_MOVE);
-        } catch (AtomicMoveNotSupportedException e) {
+        } catch (AtomicMoveNotSupportedException _) {
             Files.move(from, to);
         }
     }

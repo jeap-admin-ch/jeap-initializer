@@ -10,7 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/", "/wizard/**", "/api/**", "/style.css").permitAll()
                         .requestMatchers("/error").permitAll()

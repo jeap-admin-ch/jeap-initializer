@@ -1,5 +1,7 @@
 package ch.admin.bit.jeap.initializer.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+@UtilityClass
 public class FileUtils {
 
     public static void replaceInFiles(String fileNamePatternString, Path projectRoot, String original, String replacement) {
@@ -68,7 +71,7 @@ public class FileUtils {
     private static void processFile(FileProcessor fileProcessor, Path matchingFile) {
         try {
             fileProcessor.process(matchingFile);
-        } catch (MalformedInputException e) {
+        } catch (MalformedInputException _) {
             // Ignore non-text files
         } catch (IOException e) {
             throw FileProcessingException.ioException(e);

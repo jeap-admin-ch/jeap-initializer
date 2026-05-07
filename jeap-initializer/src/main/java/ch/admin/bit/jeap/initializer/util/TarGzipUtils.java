@@ -1,5 +1,6 @@
 package ch.admin.bit.jeap.initializer.util;
 
+import lombok.experimental.UtilityClass;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.compress.archivers.tar.TarArchiveOutputStream.LONGFILE_POSIX;
 
+@UtilityClass
 public class TarGzipUtils {
 
     public static void tarGzipDirectory(Path sourceDirPath, Path outputFile) throws IOException {

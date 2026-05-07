@@ -4,11 +4,13 @@ import ch.admin.bit.jeap.initializer.api.InitializerController;
 import ch.admin.bit.jeap.initializer.generator.ProjectGenerator;
 import ch.admin.bit.jeap.initializer.model.ProjectRequest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.security.autoconfigure.UserDetailsServiceAutoConfiguration;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = {WizardController.class, InitializerController.class}, excludeAutoConfiguration = UserDetailsServiceAutoConfiguration.class)
 @Import(WizardControllerTestConfig.class)
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class WizardControllerTest {
 
     @MockitoBean

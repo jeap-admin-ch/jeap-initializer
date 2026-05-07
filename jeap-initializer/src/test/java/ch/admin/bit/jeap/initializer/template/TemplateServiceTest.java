@@ -95,7 +95,7 @@ class TemplateServiceTest {
 
     @Test
     void getModuleParameters_filtersSelectedModules() {
-        TemplateParameter pA = templateParameter("pa", "Alpha");
+        TemplateParameter pA = templateParameter("pa", PLATFORM_NAME_ALPHA);
         TemplateParameter pC = templateParameter("pc", "Charlie");
         TemplateModule m1 = templateModule("m1", "Module 1", List.of(pA));
         TemplateModule m2 = templateModule("m2", "Module 2", List.of(pC));
