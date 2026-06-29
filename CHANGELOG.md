@@ -8,6 +8,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 > - Spring Boot 3 maintenance (bug fixes, patches, and regular updates) continues on branch `release/springboot3`.
 > - The Spring Boot 4 upgrade process happens on the `master` branch, with the goal of releasing Spring Boot 4 compatible versions of all jeap components in a single major release.
 
+## [4.4.0] - 2026-06-29
+
+### Dependencies
+- **ch.admin.bit.jeap:jeap-initializer-parent**: 4.3.0-SNAPSHOT → 4.3.0 (patch)
+- **org.eclipse.jgit:org.eclipse.jgit**: 7.0.0.202409031743-r → 7.7.0.202606012155-r (minor)
+- **ch.admin.bit.jeap:jeap-spring-boot-parent**: 35.11.0 → 35.11.1 (patch)
+
 ## [4.3.0] - 2026-06-23
 
 ### Changed
