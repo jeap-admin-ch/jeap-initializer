@@ -144,7 +144,6 @@ Apache License Version 2.0
  * spring-boot-validation - [org.springframework.boot:spring-boot-validation](https://spring.io/projects/spring-boot)
  * spring-boot-web-server - [org.springframework.boot:spring-boot-web-server](https://spring.io/projects/spring-boot)
  * spring-boot-webmvc - [org.springframework.boot:spring-boot-webmvc](https://spring.io/projects/spring-boot)
- * spring-boot-webmvc-test - [org.springframework.boot:spring-boot-webmvc-test](https://spring.io/projects/spring-boot)
  * Spring Cloud Context - [org.springframework.cloud:spring-cloud-context](https://projects.spring.io/spring-cloud/spring-cloud-context/)
  * spring-security-config - [org.springframework.security:spring-security-config](https://spring.io/projects/spring-security)
  * spring-security-core - [org.springframework.security:spring-security-core](https://spring.io/projects/spring-security)
