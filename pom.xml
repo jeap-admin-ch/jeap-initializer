@@ -27,7 +27,7 @@
     <parent>
         <groupId>ch.admin.bit.jeap</groupId>
         <artifactId>jeap-spring-boot-parent</artifactId>
-        <version>36.7.0</version>
+        <version>36.9.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
@@ -38,7 +38,7 @@
 
     <artifactId>jeap-initializer-parent</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <version>5.3.0-SNAPSHOT</version>
+    <version>5.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -50,7 +50,7 @@
             <dependency>
                 <groupId>ch.admin.bit.jeap</groupId>
                 <artifactId>jeap-initializer</artifactId>
-                <version>5.3.0-SNAPSHOT</version>
+                <version>5.4.0-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
