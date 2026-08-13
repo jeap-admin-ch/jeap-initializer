@@ -1,5 +1,3 @@
-@Library('jeap-aws-pipeline@v1') _
-
 gitOpsDeploymentPipeline(
     mavenImage: 'bit/eclipse-temurin:21',
     mavenDockerUser: 'jenkins',

@@ -30,8 +30,6 @@ class CodeRemoverContributorTest {
 
         String content = Files.readString(tempDir.resolve("Jenkinsfile.gitops-deployment"));
         String expectedContent = """
-                @Library('jeap-aws-pipeline@v1') _
-                
                 gitOpsDeploymentPipeline(
                     mavenImage: 'bit/eclipse-temurin:21',
                     mavenDockerUser: 'jenkins',
