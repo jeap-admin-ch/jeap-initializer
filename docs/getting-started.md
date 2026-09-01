@@ -18,6 +18,11 @@ call its REST API or use its built-in wizard UI to generate a downloadable proje
 The main class is `ch.admin.bit.jeap.initializer.Application`, a Spring Boot application. Most consumers simply
 depend on this artifact directly and run it as-is; see [Extending](extending.md) if you need custom behaviour.
 
+Depending on the platform the instance is deployed to, add the platform-specific jEAP starters your
+deployment needs (configuration, secrets, TLS, …) alongside `jeap-initializer` — the same as for any
+other jEAP application. A quick way to start is to clone an existing instance repository and swap in
+your own template configuration.
+
 ## Configure at least one template
 
 Every template the initializer can generate from must be declared in the application configuration. See
@@ -49,6 +54,51 @@ generation and downloads the resulting project as a `.tar.gz` archive.
 
 ### REST API
 
+The API is served under `<application-context-path>/api`. A Swagger UI describing the full
+request/response schema of every endpoint is available under
+`<application-context-path>/swagger-ui.html`.
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /api/templates` | List the configured templates and their parameters/modules. |
+| `POST /api/generate` | Generate a project and return it as a `.tar.gz` archive. |
+| `POST /api/cache/reset` | Drop the parsed-template cache so the next request re-reads every `initializer.yaml` from Git. |
+
+#### `GET /api/templates`
+
+Takes no parameters. Returns the configured templates — use it to drive a custom UI or to discover
+which `templateParameters` / modules a template expects before calling `POST /api/generate`:
+
+```json
+[
+  {
+    "key": "my-template",
+    "name": "My Template",
+    "description": "A sample project ...",
+    "platform": "my-cloud",
+    "templateParameters": [
+      { "id": "awsAccountId", "name": "AWS account id", "description": "The AWS account id" }
+    ],
+    "modules": [
+      {
+        "id": "object-storage",
+        "name": "Object storage",
+        "description": "Adds S3 object storage support",
+        "moduleParameters": [
+          { "id": "bucketName", "name": "Bucket name", "description": "..." }
+        ]
+      }
+    ]
+  }
+]
+```
+
+`platform` is `null` when the template declares no platform. The list reflects the template cache
+(`jeap.initializer.template-cache-duration`, default 4h); call `POST /api/cache/reset` to force a
+refresh from Git.
+
+#### `POST /api/generate`
+
 Call `POST <application-context-path>/api/generate` with a JSON body describing the desired project:
 
 ```json
@@ -74,8 +124,8 @@ Call `POST <application-context-path>/api/generate` with a JSON body describing 
 }
 ```
 
-The response is a `.tar.gz` archive of the generated project. A Swagger UI describing the full request/response
-schema is available under `<application-context-path>/swagger-ui.html`.
+The response is a `.tar.gz` archive of the generated project (`Content-Disposition: attachment`). A
+`404` is returned if `template` does not match a configured template.
 
 | Field                    | Required/Optional | Description                                                                         |
 |--------------------------|--------------------|--------------------------------------------------------------------------------------|

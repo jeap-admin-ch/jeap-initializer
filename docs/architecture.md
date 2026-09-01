@@ -87,7 +87,7 @@ MODULE <id>`.
 | `ProjectGenerator`             | Orchestrates cloning + contributor chain + Git re-init, described above.                        |
 | `GitService` / `DefaultGitService` | JGit-based cloning of template and GitOps repositories.                                    |
 | `TemplateService` / `TemplateRepository` / `CachingTemplateRepository` | Resolve configured templates/platforms; cache the parsed `ProjectTemplate`. |
-| `InitializerController`       | REST endpoint `POST /api/generate`; returns the generated project as a `.tar.gz` stream.       |
+| `InitializerController`       | REST API under `/api`: `GET /api/templates` (list configured templates), `POST /api/generate` (returns the generated project as a `.tar.gz` stream), `POST /api/cache/reset` (clear the template cache). |
 | `WizardController` / `FrontendController` | Server-rendered wizard UI backing the same generation flow.                        |
 
 ## See also

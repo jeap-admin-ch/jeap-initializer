@@ -7,6 +7,10 @@ used in generation requests to select the template. Platforms (used to group tem
 declared under `jeap.initializer.platforms` and referenced from a template's `platform` property in its
 `initializer.yaml` (see [Template Authoring](template-authoring.md)); platforms are optional.
 
+This is ordinary Spring configuration, so it can live in the instance's `application.yml` or be
+externalized to the platform's config source (environment variables, a config server, AWS AppConfig,
+…) — useful for adding or retargeting templates without rebuilding the instance.
+
 ```yaml
 jeap:
   initializer:
@@ -55,7 +59,7 @@ every configured template has a `repository-configuration.url` — the applicati
 
 | Property                                | Default                                                          | Description                                                                                       |
 |-------------------------------------------|---------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| `jeap.initializer.template-cache-duration` | `4h`                                                             | How long a parsed `ProjectTemplate` (from `initializer.yaml`) is cached before being re-fetched from Git. |
+| `jeap.initializer.template-cache-duration` | `4h`                                                             | How long a parsed `ProjectTemplate` (from `initializer.yaml`) is cached before being re-fetched from Git. `POST /api/cache/reset` clears the cache on demand (see [Getting Started](getting-started.md#rest-api)). |
 | `jeap.initializer.source-files-pattern`    | `CODEOWNERS\|Dockerfile\|Jenkinsfile.*\|(.+\.(md\|html\|css\|java\|xml\|yaml\|yml\|properties\|json\|conf\|ts))` (case-insensitive) | Regex matching which files are considered "source files" eligible for marker-based contributors (`CodeRemoverContributor`, `ParameterReplacementContributor`, `TemplateModuleContributor`). |
 
 ## Proxy configuration for local development
