@@ -1,7 +1,7 @@
 publiccodeYmlVersion: 0.5.0
 name: jeap-initializer
 applicationSuite: jEAP
-softwareVersion: 10.7.0
+softwareVersion: 10.8.0
 releaseDate: 2026-10-01
 url: "https://github.com/jeap-admin-ch/jeap-initializer.git"
 landingURL: "https://github.com/jeap-admin-ch/jeap"
