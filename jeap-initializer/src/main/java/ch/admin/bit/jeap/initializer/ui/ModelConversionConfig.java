@@ -4,7 +4,6 @@ import ch.admin.bit.jeap.initializer.ui.model.ModuleConfigurationModel;
 import ch.admin.bit.jeap.initializer.ui.model.PlatformSelectionModel;
 import ch.admin.bit.jeap.initializer.ui.model.TemplateConfigurationModel;
 import ch.admin.bit.jeap.initializer.ui.model.TemplateSelectionModel;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;

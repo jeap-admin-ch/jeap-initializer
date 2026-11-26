@@ -13,6 +13,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Dependencies
 - **ch.admin.bit.jeap:jeap-spring-boot-parent**: 41.42.0 → 41.44.0 (minor)
 
+### Changed
+- Read project templates with Jackson 3, as Jackson 2 is no longer on the classpath with Spring Boot 4.2
+
 ## [10.24.0] - 2026-11-25
 
 ### Dependencies
